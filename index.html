@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Victor Von Doom | WhatsApp</title>
+  <meta name="description" content="Direct encrypted channel to Sovereign Monarch Victor Von Doom of Latveria." />
+  <meta property="og:title" content="Victor Von Doom" />
+  <meta property="og:description" content="Sovereign of Latveria • Master of Science & Sorcery" />
+  <style>
+    :root {
+      --bg-outer: #090e11;
+      --bg-chat: #0b141a;
+      --bg-header: #202c33;
+      --bg-input: #2a3942;
+      --bg-incoming: #202c33;
+      --bg-outgoing: #005c4b;
+      --bg-system: #182229;
+      --text-primary: #e9edef;
+      --text-secondary: #8696a0;
+      --text-system: #ffd279;
+      --accent-green: #00a884;
+      --tick-grey: #8696a0;
+      --tick-blue: #53bdeb;
+      --border-subtle: rgba(134, 150, 160, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      background-color: var(--bg-outer);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* Main App Container */
+    .app-container {
+      width: 100%;
+      max-width: 520px;
+      height: 100%;
+      max-height: 100dvh;
+      background-color: var(--bg-chat);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+    }
+
+    @media (min-width: 540px) {
+      .app-container {
+        height: 94dvh;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border-subtle);
+      }
+    }
+
+    /* Subtle WhatsApp-style SVG Pattern Wallpaper */
+    .chat-wallpaper {
+      position: absolute;
+      inset: 0;
+      opacity: 0.055;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23e9edef' stroke-width='1.5'%3E%3Cpath d='M15 15h10v10H15zM55 15l7 10H48zM20 55a6 6 0 1 0 0.001 0zM52 52l12 12M64 52L52 64M38 35l4-7 4 7-4 7z'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 90px 90px;
+      z-index: 0;
+    }
+
+    /* Header */
+    .chat-header {
+      background-color: var(--bg-header);
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+      border-bottom: 1px solid var(--border-subtle);
+      min-height: 62px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      cursor: pointer;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #132a22;
+      border: 1.5px solid #00a884;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar svg, .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .contact-name-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .contact-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: 0.1px;
+    }
+
+    .verified-badge {
+      width: 16px;
+      height: 16px;
+      fill: var(--accent-green);
+      flex-shrink: 0;
+    }
+
+    .contact-status {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      margin-top: 1px;
+      transition: color 0.2s ease;
+    }
+
+    .contact-status.typing {
+      color: var(--accent-green);
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: var(--text-secondary);
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 50%;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
+    }
+
+    /* Messages Area */
+    .messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 14px 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 1;
+      scroll-behavior: smooth;
+    }
+
+    .messages-area::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .messages-area::-webkit-scrollbar-thumb {
+      background: rgba(134, 150, 160, 0.25);
+      border-radius: 4px;
+    }
+
+    /* Encryption / Sovereign Notice */
+    .system-banner {
+      align-self: center;
+      background-color: var(--bg-system);
+      color: var(--text-system);
+      font-size: 11.5px;
+      line-height: 1.4;
+      text-align: center;
+      padding: 7px 12px;
+      border-radius: 8px;
+      max-width: 88%;
+      margin: 4px 0 10px 0;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    }
+
+    .date-pill {
+      align-self: center;
+      background-color: #182229;
+      color: var(--text-secondary);
+      font-size: 11.5px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 8px;
+      margin: 4px 0 8px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    /* Message Bubbles */
+    .message-row {
+      display: flex;
+      width: 100%;
+      animation: msgPop 0.18s ease-out;
+    }
+
+    @keyframes msgPop {
+      from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .message-row.outgoing {
+      justify-content: flex-end;
+    }
+
+    .message-row.incoming {
+      justify-content: flex-start;
+    }
+
+    .bubble {
+      position: relative;
+      max-width: 82%;
+      padding: 7px 10px 7px 11px;
+      border-radius: 8px;
+      font-size: 14.5px;
+      line-height: 1.42;
+      word-wrap: break-word;
+      box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.28);
+    }
+
+    .incoming .bubble {
+      background-color: var(--bg-incoming);
+      color: var(--text-primary);
+      border-top-left-radius: 0;
+      margin-left: 6px;
+    }
+
+    .incoming .bubble::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -8px;
+      width: 0;
+      height: 0;
+      border-top: 10px solid var(--bg-incoming);
+      border-left: 8px solid transparent;
+    }
+
+    .outgoing .bubble {
+      background-color: var(--bg-outgoing);
+      color: var(--text-primary);
+      border-top-right-radius: 0;
+      margin-right: 6px;
+    }
+
+    .outgoing .bubble::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: -8px;
+      width: 0;
+      height: 0;
+      border-top: 10px solid var(--bg-outgoing);
+      border-right: 8px solid transparent;
+    }
+
+    .msg-text {
+      white-space: pre-wrap;
+    }
+
+    .msg-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      float: right;
+      margin: 4px 0 -3px 10px;
+      font-size: 11px;
+      color: rgba(233, 237, 239, 0.65);
+      user-select: none;
+    }
+
+    .ticks {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .ticks svg {
+      width: 16px;
+      height: 11px;
+    }
+
+    /* Typing Indicator Bubble */
+    .typing-bubble {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 11px 14px;
+    }
+
+    .dot {
+      width: 6.5px;
+      height: 6.5px;
+      background-color: var(--text-secondary);
+      border-radius: 50%;
+      animation: bounce 1.3s infinite ease-in-out;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.16s; }
+    .dot:nth-child(3) { animation-delay: 0.32s; }
+
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+      30% { transform: translateY(-4px); opacity: 1; }
+    }
+
+    /* Quick Reply Suggestions */
+    .quick-replies {
+      display: flex;
+      gap: 7px;
+      overflow-x: auto;
+      padding: 6px 12px;
+      z-index: 5;
+      scrollbar-width: none;
+    }
+
+    .quick-replies::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      background-color: rgba(32, 44, 51, 0.92);
+      border: 1px solid rgba(0, 168, 132, 0.35);
+      color: #d1d7db;
+      font-size: 12.5px;
+      padding: 6px 12px;
+      border-radius: 16px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chip:hover {
+      background-color: #005c4b;
+      border-color: var(--accent-green);
+      color: #fff;
+    }
+
+    /* Input Bar */
+    .input-bar {
+      background-color: var(--bg-header);
+      padding: 8px 10px;
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .input-wrapper {
+      flex: 1;
+      background-color: var(--bg-input);
+      border-radius: 22px;
+      padding: 9px 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    #messageInput {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 15px;
+      font-family: inherit;
+      resize: none;
+      max-height: 100px;
+      line-height: 1.35;
+    }
+
+    #messageInput::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .send-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background-color: var(--accent-green);
+      color: #0b141a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.12s ease, background-color 0.15s ease;
+    }
+
+    .send-btn:hover {
+      background-color: #06cf9c;
+    }
+
+    .send-btn:active {
+      transform: scale(0.93);
+    }
+
+    /* Profile Modal */
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .profile-card {
+      background: var(--bg-header);
+      width: 100%;
+      max-width: 340px;
+      border-radius: 14px;
+      padding: 22px;
+      text-align: center;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .profile-card .large-avatar {
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 12px auto;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--accent-green);
+    }
+
+    .profile-card h2 {
+      font-size: 19px;
+      margin-bottom: 4px;
+    }
+
+    .profile-card .subtitle {
+      font-size: 13px;
+      color: var(--accent-green);
+      margin-bottom: 14px;
+    }
+
+    .profile-card .bio {
+      background: var(--bg-chat);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #d1d7db;
+      text-align: left;
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .close-modal-btn {
+      background: var(--accent-green);
+      color: #0b141a;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 13.5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <div class="chat-wallpaper"></div>
+
+    <!-- Top Header -->
+    <header class="chat-header">
+      <div class="header-left" id="openProfileBtn" title="View Sovereign Info">
+        <div class="avatar" id="headerAvatar">
+          <!-- Custom SVG Dr. Doom Mask + Hood -->
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <rect width="100" height="100" fill="#0d261c"/>
+            <!-- Hood -->
+            <path d="M12 96 C12 42, 24 12, 50 12 C76 12, 88 42, 88 96 Z" fill="#14532d"/>
+            <path d="M22 92 C22 48, 32 22, 50 22 C68 22, 78 48, 78 92 Z" fill="#091a12"/>
+            <!-- Steel Faceplate -->
+            <path d="M31 38 L50 32 L69 38 L66 72 L50 84 L34 72 Z" fill="#9ca3af"/>
+            <path d="M50 32 L69 38 L66 72 L50 84 Z" fill="#6b7280"/>
+            <!-- Brow & Angry Eyes -->
+            <polygon points="34,46 47,50 36,52" fill="#111827"/>
+            <polygon points="66,46 53,50 64,52" fill="#111827"/>
+            <circle cx="41" cy="49.5" r="1.6" fill="#fef08a"/>
+            <circle cx="59" cy="49.5" r="1.6" fill="#fef08a"/>
+            <!-- Mouth Grille -->
+            <rect x="40" y="64" width="20" height="9" rx="2" fill="#374151"/>
+            <line x1="44" y1="64" x2="44" y2="73" stroke="#111827" stroke-width="1.5"/>
+            <line x1="48" y1="64" x2="48" y2="73" stroke="#111827" stroke-width="1.5"/>
+            <line x1="52" y1="64" x2="52" y2="73" stroke="#111827" stroke-width="1.5"/>
+            <line x1="56" y1="64" x2="56" y2="73" stroke="#111827" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <div class="contact-info">
+          <div class="contact-name-row">
+            <span class="contact-name">Victor Von Doom</span>
+            <svg class="verified-badge" viewBox="0 0 24 24">
+              <path d="M12 2L14.8 4.4L18.5 4.1L19.6 7.6L22.7 9.6L21.6 13.1L22.7 16.6L19.6 18.6L18.5 22.1L14.8 21.8L12 24.2L9.2 21.8L5.5 22.1L4.4 18.6L1.3 16.6L2.4 13.1L1.3 9.6L4.4 7.6L5.5 4.1L9.2 4.4L12 2ZM10.4 16.3L17.1 9.6L15.7 8.2L10.4 13.5L8.1 11.2L6.7 12.6L10.4 16.3Z"/>
+            </svg>
+          </div>
+          <div class="contact-status" id="statusText">online</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="clearChatBtn" title="Reset Conversation">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Chat Feed -->
+    <main class="messages-area" id="messagesArea">
+      <div class="date-pill">Today</div>
+      <div class="system-banner">
+        🔒 Messages are secured by Latverian Arcane-Quantum Encryption. Speak carefully; Doom's patience is finite.
+      </div>
+    </main>
+
+    <!-- Suggested Prompts -->
+    <div class="quick-replies" id="quickReplies">
+      <button class="chip" data-msg="What do you think of Reed Richards?">Thoughts on Reed Richards?</button>
+      <button class="chip" data-msg="Can I visit Latveria?">Can I visit Latveria?</button>
+      <button class="chip" data-msg="Why do you wear the iron mask?">Why the mask?</button>
+      <button class="chip" data-msg="Who is stronger: science or magic?">Science or magic?</button>
+    </div>
+
+    <!-- Bottom Input Bar -->
+    <footer class="input-bar">
+      <div class="input-wrapper">
+        <textarea id="messageInput" rows="1" placeholder="Message Doom..."></textarea>
+      </div>
+      <button class="send-btn" id="sendBtn" aria-label="Send message">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </footer>
+
+    <!-- Sovereign Profile Modal -->
+    <div class="modal-backdrop" id="profileModal">
+      <div class="profile-card">
+        <div class="large-avatar" id="modalAvatar"></div>
+        <h2>Victor Von Doom</h2>
+        <div class="subtitle">Monarch of Latveria • +40 000 DOOM</div>
+        <div class="bio">
+          <strong>About:</strong><br/>
+          All hope lies in Doom. Do not waste my bandwidth with trivialities unless you seek wisdom, mercy, or diplomatic asylum.
+        </div>
+        <button class="close-modal-btn" id="closeModalBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const messagesArea = document.getElementById("messagesArea");
+    const messageInput = document.getElementById("messageInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const statusText = document.getElementById("statusText");
+    const quickReplies = document.getElementById("quickReplies");
+    const clearChatBtn = document.getElementById("clearChatBtn");
+    const profileModal = document.getElementById("profileModal");
+    const openProfileBtn = document.getElementById("openProfileBtn");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+
+    // Copy header avatar SVG into modal
+    document.getElementById("modalAvatar").innerHTML = document.getElementById("headerAvatar").innerHTML;
+
+    // Conversation memory for LLM context
+    let conversationHistory = [];
+    let isDoomBusy = false;
+
+    function getCurrentTime() {
+      const now = new Date();
+      return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function scrollToBottom() {
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+    }
+
+    function getTickSVG(state) {
+      // state: 'sent' (1 grey), 'delivered' (2 grey), 'read' (2 blue)
+      if (state === "sent") {
+        return `<svg viewBox="0 0 16 11" fill="none"><path d="M11.5 1.5L4.8 8.5L2 5.7" stroke="#8696a0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      }
+      const color = state === "read" ? "#53bdeb" : "#8696a0";
+      return `<svg viewBox="0 0 18 11" fill="none">
+        <path d="M11.5 1.5L4.8 8.5L2 5.7" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M15.5 1.5L8.8 8.5L7.3 7" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`;
+    }
+
+    function appendMessage(text, sender, tickState = "sent") {
+      const row = document.createElement("div");
+      row.className = `message-row ${sender}`;
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+
+      const textSpan = document.createElement("span");
+      textSpan.className = "msg-text";
+      textSpan.textContent = text;
+
+      const meta = document.createElement("span");
+      meta.className = "msg-meta";
+      meta.innerHTML = `<span>${getCurrentTime()}</span>${
+        sender === "outgoing" ? `<span class="ticks">${getTickSVG(tickState)}</span>` : ""
+      }`;
+
+      bubble.appendChild(textSpan);
+      bubble.appendChild(meta);
+      row.appendChild(bubble);
+      messagesArea.appendChild(row);
+      scrollToBottom();
+
+      return row;
+    }
+
+    function updateTicks(rowElement, newState) {
+      const tickContainer = rowElement.querySelector(".ticks");
+      if (tickContainer) {
+        tickContainer.innerHTML = getTickSVG(newState);
+      }
+    }
+
+    function showTypingBubble() {
+      const row = document.createElement("div");
+      row.className = "message-row incoming";
+      row.id = "typingIndicatorRow";
+      row.innerHTML = `
+        <div class="bubble typing-bubble">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+      `;
+      messagesArea.appendChild(row);
+      scrollToBottom();
+    }
+
+    function removeTypingBubble() {
+      const existing = document.getElementById("typingIndicatorRow");
+      if (existing) existing.remove();
+    }
+
+    // Built-in Scripted Fallback / Easter Egg Brain
+    function getScriptedResponse(userText) {
+      const lower = userText.toLowerCase();
+
+      if (lower.includes("reed") || lower.includes("richards") || lower.includes("fantastic")) {
+        return "Do not sully this private channel with the name of that arrogant stretch-limbed fool. Richards mistakes luck for genius. Doom deals in perfection.";
+      }
+      if (lower.includes("latveria") || lower.includes("visit") || lower.includes("country")) {
+        return "Latveria kno
