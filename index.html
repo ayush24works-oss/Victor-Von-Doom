@@ -704,4 +704,166 @@
         return "Do not sully this private channel with the name of that arrogant stretch-limbed fool. Richards mistakes luck for genius. Doom deals in perfection.";
       }
       if (lower.includes("latveria") || lower.includes("visit") || lower.includes("country")) {
-        return "Latveria kno
+        return "Latveria knows neither poverty, crime, nor hunger—because Doom wills it so. You may apply for a 48-hour diplomatic visa at the border. Do not litter.";
+      }
+      if (lower.includes("mask") || lower.includes("face") || lower.includes("scar")) {
+        return "This visage of cold titanium is the face of absolute authority. A sovereign does not display human weakness to lesser men.";
+      }
+      if (lower.includes("magic") || lower.includes("science") || lower.includes("stronger")) {
+        return "Only a narrow mind separates the two. Where Reed Richards hits a wall of physics, Doom bends the astral plane to his command. I have mastered both.";
+      }
+      if (lower.includes("stark") || lower.includes("iron man") || lower.includes("tony")) {
+        return "Stark builds toys in a garage and calls himself a futurist. My armor is forged from titanium, nuclear micro-reactors, and ancient sorcery. There is no comparison.";
+      }
+      if (lower.includes("avenger") || lower.includes("hero") || lower.includes("heroes")) {
+        return "Self-righteous vigilantes preserving a broken status quo. Doom actually fixes the world—they simply lack the spine to kneel.";
+      }
+      if (lower === "hi" || lower === "hello" || lower === "hey" || lower.includes("who are you")) {
+        return "You address Victor Von Doom, Monarch of Latveria. State your purpose quickly before I have a Doombot terminate this connection.";
+      }
+
+      const genericReplies = [
+        "Speak plainly, mortal. Doom governs a sovereign nation and has little time for idle chatter.",
+        "An intriguing thought—for one of limited intellect. Elaborate, if you dare.",
+        "Doom has already calculated forty-seven outcomes to this conversation. Impress me with the forty-eighth.",
+        "You text the ruler of Latveria as though we were peers. Bold. Foolish, yet bold."
+      ];
+      return genericReplies[Math.floor(Math.random() * genericReplies.length)];
+    }
+
+    // Hybrid Reply Engine: Tries /api/chat first, falls back to Scripted Brain seamlessly
+    async function fetchDoomReply(userText) {
+      try {
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: userText,
+            history: conversationHistory.slice(-10)
+          })
+        });
+
+        if (!response.ok) throw new Error("Backend not connected yet");
+        const data = await response.json();
+        if (data && data.reply) {
+          return data.reply;
+        }
+        throw new Error("Empty reply");
+      } catch (err) {
+        // Fallback to scripted engine when /api/chat isn't deployed yet
+        return getScriptedResponse(userText);
+      }
+    }
+
+    const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
+
+    async function handleSend(customText = null) {
+      if (isDoomBusy) return;
+      const text = (customText ?? messageInput.value).trim();
+      if (!text) return;
+
+      isDoomBusy = true;
+      if (!customText) {
+        messageInput.value = "";
+        messageInput.style.height = "auto";
+      }
+
+      // 1. Render user's outgoing message with single grey tick
+      const msgRow = appendMessage(text, "outgoing", "sent");
+      conversationHistory.push({ role: "user", content: text });
+
+      // 2. Simulate delivery (double grey ticks)
+      await sleep(350);
+      updateTicks(msgRow, "delivered");
+
+      // 3. Simulate Doom reading the message (double blue ticks)
+      await sleep(550);
+      updateTicks(msgRow, "read");
+
+      // 4. Doom starts typing...
+      statusText.textContent = "typing...";
+      statusText.classList.add("typing");
+      showTypingBubble();
+
+      // Fetch LLM response + enforce minimum dramatic pause
+      const [reply] = await Promise.all([
+        fetchDoomReply(text),
+        sleep(1100)
+      ]);
+
+      // 5. Deliver Doom's reply
+      removeTypingBubble();
+      statusText.textContent = "online";
+      statusText.classList.remove("typing");
+
+      appendMessage(reply, "incoming");
+      conversationHistory.push({ role: "assistant", content: reply });
+      isDoomBusy = false;
+    }
+
+    // Auto-resize textarea
+    messageInput.addEventListener("input", () => {
+      messageInput.style.height = "auto";
+      messageInput.style.height = Math.min(messageInput.scrollHeight, 100) + "px";
+    });
+
+    // Enter to send (Shift+Enter for new line)
+    messageInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSend();
+      }
+    });
+
+    sendBtn.addEventListener("click", () => handleSend());
+
+    // Quick reply chips
+    quickReplies.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (chip) {
+        handleSend(chip.getAttribute("data-msg"));
+      }
+    });
+
+    // Reset chat
+    clearChatBtn.addEventListener("click", () => {
+      if (isDoomBusy) return;
+      conversationHistory = [];
+      messagesArea.innerHTML = `
+        <div class="date-pill">Today</div>
+        <div class="system-banner">
+          🔒 Messages are secured by Latverian Arcane-Quantum Encryption. Speak carefully; Doom's patience is finite.
+        </div>
+      `;
+      setTimeout(() => {
+        appendMessage("You dare summon Doom on this frequency? Speak quickly.", "incoming");
+      }, 400);
+    });
+
+    // Profile modal handlers
+    openProfileBtn.addEventListener("click", () => profileModal.classList.add("open"));
+    closeModalBtn.addEventListener("click", () => profileModal.classList.remove("open"));
+    profileModal.addEventListener("click", (e) => {
+      if (e.target === profileModal) profileModal.classList.remove("open");
+    });
+
+    // Initial greeting from Doom on page load
+    window.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        statusText.textContent = "typing...";
+        statusText.classList.add("typing");
+        showTypingBubble();
+
+        setTimeout(() => {
+          removeTypingBubble();
+          statusText.textContent = "online";
+          statusText.classList.remove("typing");
+          const openingLine = "You have reached the private line of Victor Von Doom. State your business—before I lose interest.";
+          appendMessage(openingLine, "incoming");
+          conversationHistory.push({ role: "assistant", content: openingLine });
+        }, 1100);
+      }, 500);
+    });
+  </script>
+</body>
+</html>
