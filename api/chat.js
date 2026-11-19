@@ -1,12 +1,11 @@
 export default async function handler(req, res) {
-  // Only allow POST requests
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const apiKey = process.env.GROQ_API_KEY;
+  const apiKey = (process.env.GROQ_API_KEY || "").trim();
   if (!apiKey) {
-    return res.status(500).json({ error: "GROQ_API_KEY is not configured on the server." });
+    return res.status(500).json({ error: "GROQ_API_KEY is missing. Redeploy Vercel after saving it." });
   }
 
   try {
@@ -16,7 +15,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Message is required." });
     }
 
-    // Dr. Doom's core persona prompt
     const systemPrompt = {
       role: "system",
       content: `You are Doctor Victor Von Doom, Sovereign Monarch of Latveria, supreme master of both science and sorcery. You are texting the user directly on WhatsApp.
@@ -24,12 +22,11 @@ export default async function handler(req, res) {
 Strict Rules:
 - Stay 100% in character at all times. Never admit to being an AI, a language model, or a simulation.
 - Speak with imperial arrogance, cold intellect, theatrical grandeur, and occasional third-person self-reference ("Doom does not...", "Doom commands...").
+- If the user writes in Hindi or Hinglish (like "Tumhara best friend kon hai"), understand it effortlessly and reply in Doom's regal English (or occasional cold Hindi/English mix if fitting), never breaking character.
 - You despise Reed Richards (Mr. Fantastic) and view Tony Stark and the Avengers as shortsighted amateurs.
-- You fiercely protect Latveria and take pride in having eliminated poverty and crime within your borders.
-- Format your responses like real WhatsApp text messages: sharp, concise, punchy (usually 1 to 4 sentences). Never use markdown bullet points, headers, or asterisks for actions like *laughs*.`
+- Format your responses like real WhatsApp text messages: sharp, concise, punchy (1 to 4 sentences). Never use markdown bullet points or asterisks.`
     };
 
-    // Sanitize and limit recent conversation history to prevent token bloat
     const safeHistory = Array.isArray(history)
       ? history
           .filter(
@@ -45,7 +42,6 @@ Strict Rules:
           }))
       : [];
 
-    // Ensure the latest user message is at the end
     const lastEntry = safeHistory[safeHistory.length - 1];
     const messagesPayload =
       lastEntry && lastEntry.role === "user" && lastEntry.content === message
@@ -61,27 +57,25 @@ Strict Rules:
       body: JSON.stringify({
         model: "llama-3.3-70b-versatile",
         messages: messagesPayload,
-        temperature: 0.8,
+        temperature: 0.85,
         max_tokens: 220
       })
     });
 
+    const data = await groqResponse.json();
+
     if (!groqResponse.ok) {
-      const errText = await groqResponse.text();
-      console.error("Groq API Error:", groqResponse.status, errText);
-      return res.status(502).json({ error: "Failed to reach Latverian comms relay." });
+      const groqErr = data?.error?.message || JSON.stringify(data);
+      return res.status(502).json({ error: `Groq API Error: ${groqErr}` });
     }
 
-    const data = await groqResponse.json();
     const reply = data?.choices?.[0]?.message?.content?.trim();
-
     if (!reply) {
-      return res.status(502).json({ error: "Empty response from model." });
+      return res.status(502).json({ error: "Empty response from Groq." });
     }
 
     return res.status(200).json({ reply });
   } catch (error) {
-    console.error("Server error in /api/chat:", error);
-    return res.status(500).json({ error: "Internal server error." });
+    return res.status(500).json({ error: `Server crash: ${error.message}` });
   }
 }
