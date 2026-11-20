@@ -961,43 +961,47 @@
           ];
           return pool[Math.floor(Math.random() * pool.length)];
         }
-      },
+      },     
       {
-        id: "sherlock",
-        name: "Sherlock Holmes",
-        handle: "221B Baker Street • London",
-        category: "Detectives",
+        id: "wanda",
+        name: "Wanda Maximoff",
+        handle: "Scarlet Witch • Chaos Magic",
+        category: "Heroes",
         pinned: false,
         unread: 1,
         lastTime: "Yesterday",
         status: "online",
-        bio: "The game is afoot.",
-        openingLine: "Interesting. You opened this chat looking for clever replies rather than ordinary small talk. Let's see what you bring me.",
+        bio: "Be careful with your words. Reality can shift faster than you expect.",
+        openingLine: "You reached me. Speak carefully—some memories and realities are delicate.",
         chips: [
-          { label: "Deduce something", msg: "Deduce something about me." },
-          { label: "Give me a riddle", msg: "Give me a riddle to solve." }
+          { label: "Chaos magic?", msg: "How does your chaos magic work?" },
+          { label: "Thoughts on Doom?", msg: "Have you ever crossed paths with Victor Von Doom?" },
+          { label: "Vision?", msg: "How are you doing lately?" }
         ],
         avatarSVG: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <rect width="100" height="100" fill="#17202a"/>
-          <ellipse cx="50" cy="30" rx="28" ry="10" fill="#5c4033"/>
-          <path d="M32 30 C32 16, 68 16, 68 30 Z" fill="#6f4e37"/>
-          <path d="M34 34 L66 34 L62 74 L50 84 L38 74 Z" fill="#e2e8f0"/>
-          <circle cx="43" cy="48" r="2.2" fill="#0f172a"/>
-          <circle cx="57" cy="48" r="2.2" fill="#0f172a"/>
-          <path d="M44 66 Q50 63 56 66" stroke="#0f172a" stroke-width="2" fill="none"/>
+          <rect width="100" height="100" fill="#260812"/>
+          <path d="M18 96 C18 46, 28 16, 50 16 C72 16, 82 46, 82 96 Z" fill="#991b1b"/>
+          <path d="M32 34 L50 28 L68 34 L64 74 L50 84 L36 74 Z" fill="#f3d2c1"/>
+          <path d="M26 42 L50 24 L74 42 L70 46 L50 31 L30 46 Z" fill="#dc2626"/>
+          <circle cx="42" cy="50" r="2.2" fill="#e11d48"/>
+          <circle cx="58" cy="50" r="2.2" fill="#e11d48"/>
+          <path d="M44 67 Q50 70 56 67" stroke="#9f1239" stroke-width="2" fill="none"/>
         </svg>`,
         getReply(input) {
           const t = input.toLowerCase();
-          if (t.includes("deduce")) {
-            return "Elementary: You like clean, familiar interfaces and you're curious enough to test how different characters react.";
+          if (t.includes("magic") || t.includes("chaos") || t.includes("power") || t.includes("scarlet")) {
+            return "Chaos magic doesn't just bend rules—it rewrites them. Don't push me into having to prove it.";
           }
-          if (t.includes("riddle")) {
-            return "What has keys that open no locks, space but no room, and lets you enter without walking in? A keyboard.";
+          if (t.includes("doom") || t.includes("victor") || t.includes("latveria")) {
+            return "Doom wraps sorcery in cold steel and pride. He thinks control means safety, even when it's an iron cage.";
+          }
+          if (t.includes("vision") || t.includes("how are you") || t.includes("lately")) {
+            return "I'm holding together. Quiet nights help more than people realize.";
           }
           const pool = [
-            "Give me facts, not vague guesses. What are we actually investigating?",
-            "Observation is everything. Most people look without seeing.",
-            "The game is afoot."
+            "Funny how a simple sentence can bring back things you thought were buried.",
+            "I hear you. Just don't test my patience.",
+            "Sometimes the version of the world you expect isn't the one you end up in."
           ];
           return pool[Math.floor(Math.random() * pool.length)];
         }
