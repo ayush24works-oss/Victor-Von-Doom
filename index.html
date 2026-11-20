@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Victor Von Doom | WhatsApp</title>
-  <meta name="description" content="Direct encrypted channel to Sovereign Monarch Victor Von Doom of Latveria." />
-  <meta property="og:title" content="Victor Von Doom" />
-  <meta property="og:description" content="Sovereign of Latveria • Master of Science & Sorcery" />
+  <title>StarkChat | Stark Industries Encrypted Comms</title>
+  <meta name="description" content="Stark Industries Multiverse Messaging Interface. Powered by J.A.R.V.I.S." />
   <style>
     :root {
-      --bg-outer: #090e11;
-      --bg-chat: #0b141a;
-      --bg-header: #202c33;
-      --bg-input: #2a3942;
-      --bg-incoming: #202c33;
-      --bg-outgoing: #005c4b;
-      --bg-system: #182229;
-      --text-primary: #e9edef;
-      --text-secondary: #8696a0;
-      --text-system: #ffd279;
-      --accent-green: #00a884;
-      --tick-grey: #8696a0;
-      --tick-blue: #53bdeb;
-      --border-subtle: rgba(134, 150, 160, 0.15);
+      /* Stark Industries + WhatsApp Hybrid Palette */
+      --bg-outer: #04070d;
+      --bg-app: #080d16;
+      --bg-header: #0f1726;
+      --bg-surface: #131d31;
+      --bg-hover: #18253d;
+      --bg-incoming: #131d31;
+      --bg-outgoing: #0c3b54;
+      --bg-system: #0d192b;
+      --text-primary: #eef6ff;
+      --text-secondary: #7e97b8;
+      --arc-cyan: #00d8ff;
+      --arc-cyan-dim: rgba(0, 216, 255, 0.16);
+      --stark-gold: #f59e0b;
+      --tick-grey: #7e97b8;
+      --tick-blue: #00d8ff;
+      --border-hud: rgba(0, 216, 255, 0.16);
     }
 
     * {
@@ -44,120 +45,385 @@
       overflow: hidden;
     }
 
-    /* Main App Container */
-    .app-container {
+    .app-shell {
       width: 100%;
-      max-width: 520px;
+      max-width: 500px;
       height: 100%;
       max-height: 100dvh;
-      background-color: var(--bg-chat);
+      background-color: var(--bg-app);
+      position: relative;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      position: relative;
-      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 0 50px rgba(0, 216, 255, 0.12), 0 16px 40px rgba(0, 0, 0, 0.8);
     }
 
-    @media (min-width: 540px) {
-      .app-container {
+    @media (min-width: 520px) {
+      .app-shell {
         height: 94dvh;
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid var(--border-subtle);
+        border-radius: 16px;
+        border: 1px solid var(--border-hud);
       }
     }
 
-    /* Subtle WhatsApp-style SVG Pattern Wallpaper */
-    .chat-wallpaper {
+    /* Views (Home vs Active Chat) */
+    .view {
       position: absolute;
       inset: 0;
-      opacity: 0.055;
-      pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23e9edef' stroke-width='1.5'%3E%3Cpath d='M15 15h10v10H15zM55 15l7 10H48zM20 55a6 6 0 1 0 0.001 0zM52 52l12 12M64 52L52 64M38 35l4-7 4 7-4 7z'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 90px 90px;
-      z-index: 0;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-app);
+      transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease;
     }
 
-    /* Header */
-    .chat-header {
+    .view.hidden-left {
+      transform: translateX(-28%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .view.hidden-right {
+      transform: translateX(100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* ================= HOME VIEW (STARKCHAT) ================= */
+    .home-header {
       background-color: var(--bg-header);
-      padding: 10px 14px;
+      padding: 14px 16px 10px 16px;
+      border-bottom: 1px solid var(--border-hud);
+    }
+
+    .brand-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      z-index: 10;
-      border-bottom: 1px solid var(--border-subtle);
-      min-height: 62px;
+      margin-bottom: 12px;
     }
 
-    .header-left {
+    .brand-title-group {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 9px;
+    }
+
+    .arc-logo {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--arc-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(0, 216, 255, 0.5);
+    }
+
+    .arc-logo-core {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--arc-cyan);
+      box-shadow: 0 0 8px var(--arc-cyan);
+    }
+
+    .brand-name {
+      font-size: 21px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: var(--text-primary);
+    }
+
+    .brand-name span {
+      color: var(--arc-cyan);
+    }
+
+    .stark-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--stark-gold);
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      padding: 3px 7px;
+      border-radius: 6px;
+    }
+
+    /* WhatsApp-style Search Bar */
+    .search-box {
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-hud);
+      border-radius: 20px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .search-box svg {
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    /* Filter Chips (All, Unread, Heroes, Villains) */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      padding: 10px 16px 8px 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .filter-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-pill {
+      background-color: var(--bg-surface);
+      color: var(--text-secondary);
+      border: 1px solid transparent;
+      padding: 6px 13px;
+      border-radius: 16px;
+      font-size: 12.5px;
+      font-weight: 500;
       cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .filter-pill.active {
+      background-color: var(--arc-cyan-dim);
+      color: var(--arc-cyan);
+      border-color: rgba(0, 216, 255, 0.4);
+    }
+
+    /* Chat List */
+    .chat-list {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 12px;
+    }
+
+    .chat-row {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border-bottom: 1px solid rgba(126, 151, 184, 0.06);
+    }
+
+    .chat-row:hover, .chat-row:active {
+      background-color: var(--bg-hover);
     }
 
     .avatar {
-      width: 42px;
-      height: 42px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       overflow: hidden;
       flex-shrink: 0;
-      background: #132a22;
-      border: 1.5px solid #00a884;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border: 1.5px solid rgba(0, 216, 255, 0.45);
+      background: var(--bg-surface);
     }
 
-    .avatar svg, .avatar img {
+    .avatar svg {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      display: block;
     }
 
-    .contact-info {
+    .chat-row-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .chat-row-top {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
     }
 
-    .contact-name-row {
+    .chat-row-name {
+      font-size: 15.5px;
+      font-weight: 600;
+      color: var(--text-primary);
       display: flex;
       align-items: center;
       gap: 5px;
     }
 
-    .contact-name {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--text-primary);
-      letter-spacing: 0.1px;
-    }
-
-    .verified-badge {
-      width: 16px;
-      height: 16px;
-      fill: var(--accent-green);
+    .verified-icon {
+      width: 15px;
+      height: 15px;
+      fill: var(--arc-cyan);
       flex-shrink: 0;
     }
 
-    .contact-status {
-      font-size: 12.5px;
+    .chat-row-time {
+      font-size: 11.5px;
       color: var(--text-secondary);
-      margin-top: 1px;
-      transition: color 0.2s ease;
     }
 
-    .contact-status.typing {
-      color: var(--accent-green);
-      font-weight: 500;
+    .chat-row-time.has-unread {
+      color: var(--arc-cyan);
+      font-weight: 600;
     }
 
-    .header-actions {
+    .chat-row-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chat-row-preview {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .unread-badge {
+      background-color: var(--arc-cyan);
+      color: #04101a;
+      font-size: 11px;
+      font-weight: 700;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
-      gap: 18px;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pin-icon {
       color: var(--text-secondary);
+      opacity: 0.7;
+    }
+
+    /* Bottom Navigation Bar (WhatsApp Style) */
+    .bottom-nav {
+      background-color: var(--bg-header);
+      border-top: 1px solid var(--border-hud);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 10px 0;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-secondary);
+      font-size: 11.5px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .nav-item.active {
+      color: var(--arc-cyan);
+    }
+
+    .nav-pill {
+      padding: 3px 16px;
+      border-radius: 14px;
+    }
+
+    .nav-item.active .nav-pill {
+      background-color: var(--arc-cyan-dim);
+    }
+
+    /* ================= ACTIVE CHAT VIEW ================= */
+    .chat-wallpaper {
+      position: absolute;
+      inset: 0;
+      opacity: 0.06;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='90' height='90' viewBox='0 0 90 90' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2300d8ff' stroke-width='1.2'%3E%3Ccircle cx='45' cy='45' r='16'/%3E%3Ccircle cx='45' cy='45' r='6'/%3E%3Cpath d='M45 10v12M45 68v12M10 45h12M68 45h12'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 90px 90px;
+      z-index: 0;
+    }
+
+    .chat-header {
+      background-color: var(--bg-header);
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-hud);
+      z-index: 10;
+      min-height: 62px;
+    }
+
+    .chat-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--arc-cyan);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chat-contact-trigger {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      min-width: 0;
+    }
+
+    .chat-contact-trigger .avatar {
+      width: 40px;
+      height: 40px;
+    }
+
+    .chat-contact-name {
+      font-size: 15.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chat-contact-status {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .chat-contact-status.typing {
+      color: var(--arc-cyan);
+      font-weight: 500;
     }
 
     .icon-btn {
@@ -165,24 +431,22 @@
       border: none;
       color: var(--text-secondary);
       cursor: pointer;
+      padding: 7px;
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 4px;
-      border-radius: 50%;
-      transition: background 0.15s, color 0.15s;
     }
 
     .icon-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-primary);
+      background: rgba(0, 216, 255, 0.1);
+      color: var(--arc-cyan);
     }
 
-    /* Messages Area */
     .messages-area {
       flex: 1;
       overflow-y: auto;
-      padding: 14px 14px 10px 14px;
+      padding: 14px 14px 8px 14px;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -190,83 +454,61 @@
       scroll-behavior: smooth;
     }
 
-    .messages-area::-webkit-scrollbar {
-      width: 5px;
+    .date-pill {
+      align-self: center;
+      background-color: var(--bg-surface);
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 8px;
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
-    .messages-area::-webkit-scrollbar-thumb {
-      background: rgba(134, 150, 160, 0.25);
-      border-radius: 4px;
-    }
-
-    /* Encryption / Sovereign Notice */
     .system-banner {
       align-self: center;
       background-color: var(--bg-system);
-      color: var(--text-system);
+      border: 1px solid var(--border-hud);
+      color: var(--stark-gold);
       font-size: 11.5px;
       line-height: 1.4;
       text-align: center;
       padding: 7px 12px;
       border-radius: 8px;
-      max-width: 88%;
-      margin: 4px 0 10px 0;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+      max-width: 90%;
+      margin-bottom: 10px;
     }
 
-    .date-pill {
-      align-self: center;
-      background-color: #182229;
-      color: var(--text-secondary);
-      font-size: 11.5px;
-      font-weight: 500;
-      padding: 5px 12px;
-      border-radius: 8px;
-      margin: 4px 0 8px 0;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-    }
-
-    /* Message Bubbles */
     .message-row {
       display: flex;
       width: 100%;
-      animation: msgPop 0.18s ease-out;
+      animation: msgIn 0.18s ease-out;
     }
 
-    @keyframes msgPop {
-      from {
-        opacity: 0;
-        transform: translateY(6px) scale(0.98);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .message-row.outgoing {
-      justify-content: flex-end;
-    }
-
-    .message-row.incoming {
-      justify-content: flex-start;
-    }
+    .message-row.outgoing { justify-content: flex-end; }
+    .message-row.incoming { justify-content: flex-start; }
 
     .bubble {
       position: relative;
       max-width: 82%;
-      padding: 7px 10px 7px 11px;
-      border-radius: 8px;
+      padding: 8px 11px;
+      border-radius: 10px;
       font-size: 14.5px;
       line-height: 1.42;
       word-wrap: break-word;
-      box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.28);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
     }
 
     .incoming .bubble {
       background-color: var(--bg-incoming);
-      color: var(--text-primary);
+      border: 1px solid rgba(0, 216, 255, 0.12);
       border-top-left-radius: 0;
       margin-left: 6px;
     }
@@ -276,15 +518,13 @@
       position: absolute;
       top: 0;
       left: -8px;
-      width: 0;
-      height: 0;
       border-top: 10px solid var(--bg-incoming);
       border-left: 8px solid transparent;
     }
 
     .outgoing .bubble {
       background-color: var(--bg-outgoing);
-      color: var(--text-primary);
+      border: 1px solid rgba(0, 216, 255, 0.25);
       border-top-right-radius: 0;
       margin-right: 6px;
     }
@@ -294,14 +534,8 @@
       position: absolute;
       top: 0;
       right: -8px;
-      width: 0;
-      height: 0;
       border-top: 10px solid var(--bg-outgoing);
       border-right: 8px solid transparent;
-    }
-
-    .msg-text {
-      white-space: pre-wrap;
     }
 
     .msg-meta {
@@ -310,46 +544,32 @@
       gap: 4px;
       float: right;
       margin: 4px 0 -3px 10px;
-      font-size: 11px;
-      color: rgba(233, 237, 239, 0.65);
-      user-select: none;
+      font-size: 10.5px;
+      color: rgba(238, 246, 255, 0.65);
     }
 
-    .ticks {
-      display: inline-flex;
-      align-items: center;
-    }
-
-    .ticks svg {
-      width: 16px;
-      height: 11px;
-    }
-
-    /* Typing Indicator Bubble */
     .typing-bubble {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 11px 14px;
+      padding: 12px 15px;
     }
 
     .dot {
-      width: 6.5px;
-      height: 6.5px;
-      background-color: var(--text-secondary);
+      width: 6px;
+      height: 6px;
+      background-color: var(--arc-cyan);
       border-radius: 50%;
-      animation: bounce 1.3s infinite ease-in-out;
+      animation: pulseDot 1.3s infinite ease-in-out;
     }
-
     .dot:nth-child(2) { animation-delay: 0.16s; }
     .dot:nth-child(3) { animation-delay: 0.32s; }
 
-    @keyframes bounce {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+    @keyframes pulseDot {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
       30% { transform: translateY(-4px); opacity: 1; }
     }
 
-    /* Quick Reply Suggestions */
     .quick-replies {
       display: flex;
       gap: 7px;
@@ -358,15 +578,12 @@
       z-index: 5;
       scrollbar-width: none;
     }
-
-    .quick-replies::-webkit-scrollbar {
-      display: none;
-    }
+    .quick-replies::-webkit-scrollbar { display: none; }
 
     .chip {
-      background-color: rgba(32, 44, 51, 0.92);
-      border: 1px solid rgba(0, 168, 132, 0.35);
-      color: #d1d7db;
+      background-color: var(--bg-surface);
+      border: 1px solid rgba(0, 216, 255, 0.32);
+      color: var(--text-primary);
       font-size: 12.5px;
       padding: 6px 12px;
       border-radius: 16px;
@@ -376,28 +593,26 @@
     }
 
     .chip:hover {
-      background-color: #005c4b;
-      border-color: var(--accent-green);
-      color: #fff;
+      background-color: var(--bg-outgoing);
+      border-color: var(--arc-cyan);
     }
 
-    /* Input Bar */
     .input-bar {
       background-color: var(--bg-header);
       padding: 8px 10px;
       display: flex;
       align-items: flex-end;
       gap: 8px;
+      border-top: 1px solid var(--border-hud);
       z-index: 10;
     }
 
     .input-wrapper {
       flex: 1;
-      background-color: var(--bg-input);
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-hud);
       border-radius: 22px;
       padding: 9px 15px;
-      display: flex;
-      align-items: center;
     }
 
     #messageInput {
@@ -409,42 +624,34 @@
       font-size: 15px;
       font-family: inherit;
       resize: none;
-      max-height: 100px;
+      max-height: 96px;
       line-height: 1.35;
     }
 
-    #messageInput::placeholder {
-      color: var(--text-secondary);
-    }
+    #messageInput::placeholder { color: var(--text-secondary); }
 
     .send-btn {
       width: 44px;
       height: 44px;
       border-radius: 50%;
       border: none;
-      background-color: var(--accent-green);
-      color: #0b141a;
+      background-color: var(--arc-cyan);
+      color: #04101a;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       flex-shrink: 0;
-      transition: transform 0.12s ease, background-color 0.15s ease;
+      box-shadow: 0 0 14px rgba(0, 216, 255, 0.4);
     }
 
-    .send-btn:hover {
-      background-color: #06cf9c;
-    }
-
-    .send-btn:active {
-      transform: scale(0.93);
-    }
+    .send-btn:active { transform: scale(0.93); }
 
     /* Profile Modal */
     .modal-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(0, 0, 0, 0.72);
+      background: rgba(4, 7, 13, 0.78);
       display: none;
       align-items: center;
       justify-content: center;
@@ -452,418 +659,450 @@
       padding: 20px;
     }
 
-    .modal-backdrop.open {
-      display: flex;
-    }
+    .modal-backdrop.open { display: flex; }
 
     .profile-card {
       background: var(--bg-header);
+      border: 1px solid var(--border-hud);
       width: 100%;
       max-width: 340px;
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 22px;
       text-align: center;
-      border: 1px solid var(--border-subtle);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.75);
     }
 
     .profile-card .large-avatar {
-      width: 92px;
-      height: 92px;
+      width: 88px;
+      height: 88px;
       margin: 0 auto 12px auto;
       border-radius: 50%;
       overflow: hidden;
-      border: 2px solid var(--accent-green);
+      border: 2px solid var(--arc-cyan);
     }
 
-    .profile-card h2 {
-      font-size: 19px;
-      margin-bottom: 4px;
-    }
-
-    .profile-card .subtitle {
-      font-size: 13px;
-      color: var(--accent-green);
-      margin-bottom: 14px;
-    }
-
+    .profile-card h2 { font-size: 18px; margin-bottom: 4px; }
+    .profile-card .subtitle { font-size: 12.5px; color: var(--arc-cyan); margin-bottom: 14px; }
     .profile-card .bio {
-      background: var(--bg-chat);
+      background: var(--bg-app);
+      border: 1px solid var(--border-hud);
       padding: 12px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 13px;
-      color: #d1d7db;
+      color: #cfe3fa;
       text-align: left;
       line-height: 1.45;
       margin-bottom: 16px;
     }
 
     .close-modal-btn {
-      background: var(--accent-green);
-      color: #0b141a;
+      background: var(--arc-cyan);
+      color: #04101a;
       border: none;
-      padding: 9px 20px;
+      padding: 9px 22px;
       border-radius: 20px;
-      font-weight: 600;
-      font-size: 13.5px;
+      font-weight: 700;
+      font-size: 13px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="app-container">
-    <div class="chat-wallpaper"></div>
+  <div class="app-shell">
 
-    <!-- Top Header -->
-    <header class="chat-header">
-      <div class="header-left" id="openProfileBtn" title="View Sovereign Info">
-        <div class="avatar" id="headerAvatar">
-          <!-- Custom SVG Dr. Doom Mask + Hood -->
-          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100" height="100" fill="#0d261c"/>
-            <!-- Hood -->
-            <path d="M12 96 C12 42, 24 12, 50 12 C76 12, 88 42, 88 96 Z" fill="#14532d"/>
-            <path d="M22 92 C22 48, 32 22, 50 22 C68 22, 78 48, 78 92 Z" fill="#091a12"/>
-            <!-- Steel Faceplate -->
-            <path d="M31 38 L50 32 L69 38 L66 72 L50 84 L34 72 Z" fill="#9ca3af"/>
-            <path d="M50 32 L69 38 L66 72 L50 84 Z" fill="#6b7280"/>
-            <!-- Brow & Angry Eyes -->
-            <polygon points="34,46 47,50 36,52" fill="#111827"/>
-            <polygon points="66,46 53,50 64,52" fill="#111827"/>
-            <circle cx="41" cy="49.5" r="1.6" fill="#fef08a"/>
-            <circle cx="59" cy="49.5" r="1.6" fill="#fef08a"/>
-            <!-- Mouth Grille -->
-            <rect x="40" y="64" width="20" height="9" rx="2" fill="#374151"/>
-            <line x1="44" y1="64" x2="44" y2="73" stroke="#111827" stroke-width="1.5"/>
-            <line x1="48" y1="64" x2="48" y2="73" stroke="#111827" stroke-width="1.5"/>
-            <line x1="52" y1="64" x2="52" y2="73" stroke="#111827" stroke-width="1.5"/>
-            <line x1="56" y1="64" x2="56" y2="73" stroke="#111827" stroke-width="1.5"/>
-          </svg>
+    <!-- ==================== VIEW 1: STARKCHAT HOME ==================== -->
+    <section class="view" id="homeView">
+      <header class="home-header">
+        <div class="brand-bar">
+          <div class="brand-title-group">
+            <div class="arc-logo"><div class="arc-logo-core"></div></div>
+            <h1 class="brand-name">Stark<span>Chat</span></h1>
+          </div>
+          <span class="stark-tag">J.A.R.V.I.S. OS</span>
         </div>
-        <div class="contact-info">
-          <div class="contact-name-row">
-            <span class="contact-name">Victor Von Doom</span>
-            <svg class="verified-badge" viewBox="0 0 24 24">
-              <path d="M12 2L14.8 4.4L18.5 4.1L19.6 7.6L22.7 9.6L21.6 13.1L22.7 16.6L19.6 18.6L18.5 22.1L14.8 21.8L12 24.2L9.2 21.8L5.5 22.1L4.4 18.6L1.3 16.6L2.4 13.1L1.3 9.6L4.4 7.6L5.5 4.1L9.2 4.4L12 2ZM10.4 16.3L17.1 9.6L15.7 8.2L10.4 13.5L8.1 11.2L6.7 12.6L10.4 16.3Z"/>
+
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Ask J.A.R.V.I.S. or search contacts..." />
+        </div>
+      </header>
+
+      <div class="filter-bar" id="filterBar">
+        <button class="filter-pill active" data-filter="All">All</button>
+        <button class="filter-pill" data-filter="Unread">Unread</button>
+        <button class="filter-pill" data-filter="Heroes">Heroes</button>
+        <button class="filter-pill" data-filter="Villains">Villains</button>
+        <button class="filter-pill" data-filter="Detectives">Detectives</button>
+      </div>
+
+      <div class="chat-list" id="chatList"></div>
+
+      <nav class="bottom-nav">
+        <div class="nav-item active">
+          <div class="nav-pill">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
             </svg>
           </div>
-          <div class="contact-status" id="statusText">online</div>
+          <span>Chats</span>
         </div>
-      </div>
+        <div class="nav-item" id="updatesTabBtn">
+          <div class="nav-pill">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </div>
+          <span>HUD Status</span>
+        </div>
+      </nav>
+    </section>
 
-      <div class="header-actions">
-        <button class="icon-btn" id="clearChatBtn" title="Reset Conversation">
+    <!-- ==================== VIEW 2: ACTIVE CHAT ==================== -->
+    <section class="view hidden-right" id="chatView">
+      <div class="chat-wallpaper"></div>
+
+      <header class="chat-header">
+        <div class="chat-header-left">
+          <button class="back-btn" id="backToHomeBtn" aria-label="Back to StarkChat">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
+            </svg>
+          </button>
+
+          <div class="chat-contact-trigger" id="openProfileBtn">
+            <div class="avatar" id="chatHeaderAvatar"></div>
+            <div>
+              <div class="chat-contact-name">
+                <span id="chatHeaderName">Victor Von Doom</span>
+                <svg class="verified-icon" viewBox="0 0 24 24">
+                  <path d="M12 2L14.8 4.4L18.5 4.1L19.6 7.6L22.7 9.6L21.6 13.1L22.7 16.6L19.6 18.6L18.5 22.1L14.8 21.8L12 24.2L9.2 21.8L5.5 22.1L4.4 18.6L1.3 16.6L2.4 13.1L1.3 9.6L4.4 7.6L5.5 4.1L9.2 4.4L12 2ZM10.4 16.3L17.1 9.6L15.7 8.2L10.4 13.5L8.1 11.2L6.7 12.6L10.4 16.3Z"/>
+                </svg>
+              </div>
+              <div class="chat-contact-status" id="chatHeaderStatus">online</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="icon-btn" id="resetChatBtn" title="Reset Channel">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-            <path d="M3 3v5h5"/>
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
           </svg>
         </button>
-      </div>
-    </header>
+      </header>
 
-    <!-- Chat Feed -->
-    <main class="messages-area" id="messagesArea">
-      <div class="date-pill">Today</div>
-      <div class="system-banner">
-        🔒 Messages are secured by Latverian Arcane-Quantum Encryption. Speak carefully; Doom's patience is finite.
-      </div>
-    </main>
+      <main class="messages-area" id="messagesArea"></main>
 
-    <!-- Suggested Prompts -->
-    <div class="quick-replies" id="quickReplies">
-      <button class="chip" data-msg="What do you think of Reed Richards?">Thoughts on Reed Richards?</button>
-      <button class="chip" data-msg="Can I visit Latveria?">Can I visit Latveria?</button>
-      <button class="chip" data-msg="Why do you wear the iron mask?">Why the mask?</button>
-      <button class="chip" data-msg="Who is stronger: science or magic?">Science or magic?</button>
-    </div>
+      <div class="quick-replies" id="quickReplies"></div>
 
-    <!-- Bottom Input Bar -->
-    <footer class="input-bar">
-      <div class="input-wrapper">
-        <textarea id="messageInput" rows="1" placeholder="Message Doom..."></textarea>
-      </div>
-      <button class="send-btn" id="sendBtn" aria-label="Send message">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-        </svg>
-      </button>
-    </footer>
+      <footer class="input-bar">
+        <div class="input-wrapper">
+          <textarea id="messageInput" rows="1" placeholder="Transmit encrypted message..."></textarea>
+        </div>
+        <button class="send-btn" id="sendBtn" aria-label="Send">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+          </svg>
+        </button>
+      </footer>
+    </section>
 
-    <!-- Sovereign Profile Modal -->
+    <!-- Contact Dossier Modal -->
     <div class="modal-backdrop" id="profileModal">
       <div class="profile-card">
         <div class="large-avatar" id="modalAvatar"></div>
-        <h2>Victor Von Doom</h2>
-        <div class="subtitle">Monarch of Latveria • +40 000 DOOM</div>
-        <div class="bio">
-          <strong>About:</strong><br/>
-          All hope lies in Doom. Do not waste my bandwidth with trivialities unless you seek wisdom, mercy, or diplomatic asylum.
-        </div>
-        <button class="close-modal-btn" id="closeModalBtn">Close</button>
+        <h2 id="modalName">Name</h2>
+        <div class="subtitle" id="modalHandle">Handle</div>
+        <div class="bio" id="modalBio">Bio</div>
+        <button class="close-modal-btn" id="closeModalBtn">Close Dossier</button>
       </div>
     </div>
+
   </div>
 
+  <!-- Load Character Roster & Scripted Engines -->
+  <script src="./characters.js"></script>
+
   <script>
+    const homeView = document.getElementById("homeView");
+    const chatView = document.getElementById("chatView");
+    const chatListEl = document.getElementById("chatList");
+    const searchInput = document.getElementById("searchInput");
+    const filterBar = document.getElementById("filterBar");
+
+    const backToHomeBtn = document.getElementById("backToHomeBtn");
+    const chatHeaderAvatar = document.getElementById("chatHeaderAvatar");
+    const chatHeaderName = document.getElementById("chatHeaderName");
+    const chatHeaderStatus = document.getElementById("chatHeaderStatus");
     const messagesArea = document.getElementById("messagesArea");
+    const quickReplies = document.getElementById("quickReplies");
     const messageInput = document.getElementById("messageInput");
     const sendBtn = document.getElementById("sendBtn");
-    const statusText = document.getElementById("statusText");
-    const quickReplies = document.getElementById("quickReplies");
-    const clearChatBtn = document.getElementById("clearChatBtn");
+    const resetChatBtn = document.getElementById("resetChatBtn");
+
     const profileModal = document.getElementById("profileModal");
     const openProfileBtn = document.getElementById("openProfileBtn");
     const closeModalBtn = document.getElementById("closeModalBtn");
 
-    // Copy header avatar SVG into modal
-    document.getElementById("modalAvatar").innerHTML = document.getElementById("headerAvatar").innerHTML;
+    let activeFilter = "All";
+    let searchQuery = "";
+    let activeChar = null;
+    let isReplying = false;
 
-    // Conversation memory for LLM context
-    let conversationHistory = [];
-    let isDoomBusy = false;
+    // Store separate message histories per character ID
+    const chatHistories = {};
+    CHARACTERS.forEach((c) => {
+      chatHistories[c.id] = [
+        { sender: "incoming", text: c.openingLine, time: c.lastTime }
+      ];
+    });
 
-    function getCurrentTime() {
-      const now = new Date();
-      return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    }
-
-    function scrollToBottom() {
-      messagesArea.scrollTop = messagesArea.scrollHeight;
+    function getTimeNow() {
+      return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     }
 
     function getTickSVG(state) {
-      // state: 'sent' (1 grey), 'delivered' (2 grey), 'read' (2 blue)
       if (state === "sent") {
-        return `<svg viewBox="0 0 16 11" fill="none"><path d="M11.5 1.5L4.8 8.5L2 5.7" stroke="#8696a0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        return `<svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M11.5 1.5L4.8 8.5L2 5.7" stroke="#7e97b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
       }
-      const color = state === "read" ? "#53bdeb" : "#8696a0";
-      return `<svg viewBox="0 0 18 11" fill="none">
+      const color = state === "read" ? "#00d8ff" : "#7e97b8";
+      return `<svg width="18" height="11" viewBox="0 0 18 11" fill="none">
         <path d="M11.5 1.5L4.8 8.5L2 5.7" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M15.5 1.5L8.8 8.5L7.3 7" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>`;
     }
 
-    function appendMessage(text, sender, tickState = "sent") {
+    // Render StarkChat Home List
+    function renderChatList() {
+      const filtered = CHARACTERS.filter((c) => {
+        const matchesSearch =
+          c.name.toLowerCase().includes(searchQuery) ||
+          c.handle.toLowerCase().includes(searchQuery);
+        if (!matchesSearch) return false;
+        if (activeFilter === "All") return true;
+        if (activeFilter === "Unread") return c.unread > 0;
+        return c.category === activeFilter;
+      });
+
+      chatListEl.innerHTML = "";
+      filtered.forEach((c) => {
+        const history = chatHistories[c.id];
+        const lastMsg = history[history.length - 1];
+
+        const row = document.createElement("div");
+        row.className = "chat-row";
+        row.innerHTML = `
+          <div class="avatar">${c.avatarSVG}</div>
+          <div class="chat-row-body">
+            <div class="chat-row-top">
+              <div class="chat-row-name">
+                <span>${c.name}</span>
+                <svg class="verified-icon" viewBox="0 0 24 24">
+                  <path d="M12 2L14.8 4.4L18.5 4.1L19.6 7.6L22.7 9.6L21.6 13.1L22.7 16.6L19.6 18.6L18.5 22.1L14.8 21.8L12 24.2L9.2 21.8L5.5 22.1L4.4 18.6L1.3 16.6L2.4 13.1L1.3 9.6L4.4 7.6L5.5 4.1L9.2 4.4L12 2ZM10.4 16.3L17.1 9.6L15.7 8.2L10.4 13.5L8.1 11.2L6.7 12.6L10.4 16.3Z"/>
+                </svg>
+              </div>
+              <span class="chat-row-time ${c.unread > 0 ? "has-unread" : ""}">${lastMsg.time}</span>
+            </div>
+            <div class="chat-row-bottom">
+              <div class="chat-row-preview">${lastMsg.sender === "outgoing" ? "You: " : ""}${lastMsg.text}</div>
+              ${
+                c.unread > 0
+                  ? `<span class="unread-badge">${c.unread}</span>`
+                  : c.pinned
+                  ? `<span class="pin-icon">📌</span>`
+                  : ""
+              }
+            </div>
+          </div>
+        `;
+        row.addEventListener("click", () => openCharacterChat(c.id));
+        chatListEl.appendChild(row);
+      });
+    }
+
+    // Open Specific Character Chat
+    function openCharacterChat(charId) {
+      activeChar = CHARACTERS.find((c) => c.id === charId);
+      if (!activeChar) return;
+
+      activeChar.unread = 0;
+      renderChatList();
+
+      chatHeaderAvatar.innerHTML = activeChar.avatarSVG;
+      chatHeaderName.textContent = activeChar.name;
+      chatHeaderStatus.textContent = activeChar.status;
+      chatHeaderStatus.classList.remove("typing");
+
+      // Render stored messages
+      messagesArea.innerHTML = `
+        <div class="date-pill">Today</div>
+        <div class="system-banner">
+          ⚡ Secured by Stark Industries Quantum-AES Encryption via J.A.R.V.I.S. Relay.
+        </div>
+      `;
+
+      chatHistories[activeChar.id].forEach((m) => {
+        appendBubbleDOM(m.text, m.sender, m.time, "read");
+      });
+
+      // Render character-specific quick chips
+      quickReplies.innerHTML = "";
+      activeChar.chips.forEach((chip) => {
+        const btn = document.createElement("button");
+        btn.className = "chip";
+        btn.textContent = chip.label;
+        btn.addEventListener("click", () => sendMessage(chip.msg));
+        quickReplies.appendChild(btn);
+      });
+
+      homeView.classList.add("hidden-left");
+      chatView.classList.remove("hidden-right");
+    }
+
+    function closeCharacterChat() {
+      if (isReplying) return;
+      chatView.classList.add("hidden-right");
+      homeView.classList.remove("hidden-left");
+      activeChar = null;
+      renderChatList();
+    }
+
+    function appendBubbleDOM(text, sender, time, tickState = "sent") {
       const row = document.createElement("div");
       row.className = `message-row ${sender}`;
 
       const bubble = document.createElement("div");
       bubble.className = "bubble";
 
-      const textSpan = document.createElement("span");
-      textSpan.className = "msg-text";
-      textSpan.textContent = text;
+      const spanText = document.createElement("span");
+      spanText.textContent = text;
 
       const meta = document.createElement("span");
       meta.className = "msg-meta";
-      meta.innerHTML = `<span>${getCurrentTime()}</span>${
+      meta.innerHTML = `<span>${time}</span>${
         sender === "outgoing" ? `<span class="ticks">${getTickSVG(tickState)}</span>` : ""
       }`;
 
-      bubble.appendChild(textSpan);
+      bubble.appendChild(spanText);
       bubble.appendChild(meta);
       row.appendChild(bubble);
       messagesArea.appendChild(row);
-      scrollToBottom();
-
+      messagesArea.scrollTop = messagesArea.scrollHeight;
       return row;
     }
 
-    function updateTicks(rowElement, newState) {
-      const tickContainer = rowElement.querySelector(".ticks");
-      if (tickContainer) {
-        tickContainer.innerHTML = getTickSVG(newState);
-      }
-    }
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-    function showTypingBubble() {
-      const row = document.createElement("div");
-      row.className = "message-row incoming";
-      row.id = "typingIndicatorRow";
-      row.innerHTML = `
-        <div class="bubble typing-bubble">
-          <div class="dot"></div>
-          <div class="dot"></div>
-          <div class="dot"></div>
-        </div>
-      `;
-      messagesArea.appendChild(row);
-      scrollToBottom();
-    }
-
-    function removeTypingBubble() {
-      const existing = document.getElementById("typingIndicatorRow");
-      if (existing) existing.remove();
-    }
-
-    // Built-in Scripted Fallback / Easter Egg Brain
-    function getScriptedResponse(userText) {
-      const lower = userText.toLowerCase();
-
-      if (lower.includes("reed") || lower.includes("richards") || lower.includes("fantastic")) {
-        return "Do not sully this private channel with the name of that arrogant stretch-limbed fool. Richards mistakes luck for genius. Doom deals in perfection.";
-      }
-      if (lower.includes("latveria") || lower.includes("visit") || lower.includes("country")) {
-        return "Latveria knows neither poverty, crime, nor hunger—because Doom wills it so. You may apply for a 48-hour diplomatic visa at the border. Do not litter.";
-      }
-      if (lower.includes("mask") || lower.includes("face") || lower.includes("scar")) {
-        return "This visage of cold titanium is the face of absolute authority. A sovereign does not display human weakness to lesser men.";
-      }
-      if (lower.includes("magic") || lower.includes("science") || lower.includes("stronger")) {
-        return "Only a narrow mind separates the two. Where Reed Richards hits a wall of physics, Doom bends the astral plane to his command. I have mastered both.";
-      }
-      if (lower.includes("stark") || lower.includes("iron man") || lower.includes("tony")) {
-        return "Stark builds toys in a garage and calls himself a futurist. My armor is forged from titanium, nuclear micro-reactors, and ancient sorcery. There is no comparison.";
-      }
-      if (lower.includes("avenger") || lower.includes("hero") || lower.includes("heroes")) {
-        return "Self-righteous vigilantes preserving a broken status quo. Doom actually fixes the world—they simply lack the spine to kneel.";
-      }
-      if (lower === "hi" || lower === "hello" || lower === "hey" || lower.includes("who are you")) {
-        return "You address Victor Von Doom, Monarch of Latveria. State your purpose quickly before I have a Doombot terminate this connection.";
-      }
-
-      const genericReplies = [
-        "Speak plainly, mortal. Doom governs a sovereign nation and has little time for idle chatter.",
-        "An intriguing thought—for one of limited intellect. Elaborate, if you dare.",
-        "Doom has already calculated forty-seven outcomes to this conversation. Impress me with the forty-eighth.",
-        "You text the ruler of Latveria as though we were peers. Bold. Foolish, yet bold."
-      ];
-      return genericReplies[Math.floor(Math.random() * genericReplies.length)];
-    }
-
-    // Hybrid Reply Engine: Tries /api/chat first, falls back to Scripted Brain seamlessly
-    async function fetchDoomReply(userText) {
-      try {
-        const response = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: userText,
-            history: conversationHistory.slice(-10)
-          })
-        });
-
-        if (!response.ok) throw new Error("Backend not connected yet");
-        const data = await response.json();
-        if (data && data.reply) {
-          return data.reply;
-        }
-        throw new Error("Empty reply");
-      } catch (err) {
-        // Fallback to scripted engine when /api/chat isn't deployed yet
-        return getScriptedResponse(userText);
-      }
-    }
-
-    const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
-
-    async function handleSend(customText = null) {
-      if (isDoomBusy) return;
+    async function sendMessage(customText = null) {
+      if (!activeChar || isReplying) return;
       const text = (customText ?? messageInput.value).trim();
       if (!text) return;
 
-      isDoomBusy = true;
+      isReplying = true;
       if (!customText) {
         messageInput.value = "";
         messageInput.style.height = "auto";
       }
 
-      // 1. Render user's outgoing message with single grey tick
-      const msgRow = appendMessage(text, "outgoing", "sent");
-      conversationHistory.push({ role: "user", content: text });
+      const time = getTimeNow();
+      const currentTarget = activeChar;
+      chatHistories[currentTarget.id].push({ sender: "outgoing", text, time });
 
-      // 2. Simulate delivery (double grey ticks)
-      await sleep(350);
-      updateTicks(msgRow, "delivered");
+      const row = appendBubbleDOM(text, "outgoing", time, "sent");
 
-      // 3. Simulate Doom reading the message (double blue ticks)
-      await sleep(550);
-      updateTicks(msgRow, "read");
+      await sleep(320);
+      row.querySelector(".ticks").innerHTML = getTickSVG("delivered");
 
-      // 4. Doom starts typing...
-      statusText.textContent = "typing...";
-      statusText.classList.add("typing");
-      showTypingBubble();
+      await sleep(480);
+      row.querySelector(".ticks").innerHTML = getTickSVG("read");
 
-      // Fetch LLM response + enforce minimum dramatic pause
-      const [reply] = await Promise.all([
-        fetchDoomReply(text),
-        sleep(1100)
-      ]);
+      chatHeaderStatus.textContent = "typing...";
+      chatHeaderStatus.classList.add("typing");
 
-      // 5. Deliver Doom's reply
-      removeTypingBubble();
-      statusText.textContent = "online";
-      statusText.classList.remove("typing");
+      const typingRow = document.createElement("div");
+      typingRow.className = "message-row incoming";
+      typingRow.innerHTML = `<div class="bubble typing-bubble"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+      messagesArea.appendChild(typingRow);
+      messagesArea.scrollTop = messagesArea.scrollHeight;
 
-      appendMessage(reply, "incoming");
-      conversationHistory.push({ role: "assistant", content: reply });
-      isDoomBusy = false;
+      await sleep(950);
+
+      typingRow.remove();
+      chatHeaderStatus.textContent = currentTarget.status;
+      chatHeaderStatus.classList.remove("typing");
+
+      const replyText = currentTarget.getReply(text);
+      const replyTime = getTimeNow();
+      chatHistories[currentTarget.id].push({
+        sender: "incoming",
+        text: replyText,
+        time: replyTime
+      });
+
+      appendBubbleDOM(replyText, "incoming", replyTime);
+      isReplying = false;
     }
 
-    // Auto-resize textarea
-    messageInput.addEventListener("input", () => {
-      messageInput.style.height = "auto";
-      messageInput.style.height = Math.min(messageInput.scrollHeight, 100) + "px";
+    // Event Listeners
+    backToHomeBtn.addEventListener("click", closeCharacterChat);
+
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      renderChatList();
     });
 
-    // Enter to send (Shift+Enter for new line)
+    filterBar.addEventListener("click", (e) => {
+      const pill = e.target.closest(".filter-pill");
+      if (!pill) return;
+      document.querySelectorAll(".filter-pill").forEach((p) => p.classList.remove("active"));
+      pill.classList.add("active");
+      activeFilter = pill.getAttribute("data-filter");
+      renderChatList();
+    });
+
+    messageInput.addEventListener("input", () => {
+      messageInput.style.height = "auto";
+      messageInput.style.height = Math.min(messageInput.scrollHeight, 96) + "px";
+    });
+
     messageInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
-        handleSend();
+        sendMessage();
       }
     });
 
-    sendBtn.addEventListener("click", () => handleSend());
+    sendBtn.addEventListener("click", () => sendMessage());
 
-    // Quick reply chips
-    quickReplies.addEventListener("click", (e) => {
-      const chip = e.target.closest(".chip");
-      if (chip) {
-        handleSend(chip.getAttribute("data-msg"));
-      }
+    resetChatBtn.addEventListener("click", () => {
+      if (!activeChar || isReplying) return;
+      chatHistories[activeChar.id] = [
+        { sender: "incoming", text: activeChar.openingLine, time: getTimeNow() }
+      ];
+      openCharacterChat(activeChar.id);
     });
 
-    // Reset chat
-    clearChatBtn.addEventListener("click", () => {
-      if (isDoomBusy) return;
-      conversationHistory = [];
-      messagesArea.innerHTML = `
-        <div class="date-pill">Today</div>
-        <div class="system-banner">
-          🔒 Messages are secured by Latverian Arcane-Quantum Encryption. Speak carefully; Doom's patience is finite.
-        </div>
-      `;
-      setTimeout(() => {
-        appendMessage("You dare summon Doom on this frequency? Speak quickly.", "incoming");
-      }, 400);
+    openProfileBtn.addEventListener("click", () => {
+      if (!activeChar) return;
+      document.getElementById("modalAvatar").innerHTML = activeChar.avatarSVG;
+      document.getElementById("modalName").textContent = activeChar.name;
+      document.getElementById("modalHandle").textContent = activeChar.handle;
+      document.getElementById("modalBio").innerHTML = `<strong>J.A.R.V.I.S. Dossier:</strong><br/>${activeChar.bio}`;
+      profileModal.classList.add("open");
     });
 
-    // Profile modal handlers
-    openProfileBtn.addEventListener("click", () => profileModal.classList.add("open"));
     closeModalBtn.addEventListener("click", () => profileModal.classList.remove("open"));
     profileModal.addEventListener("click", (e) => {
       if (e.target === profileModal) profileModal.classList.remove("open");
     });
 
-    // Initial greeting from Doom on page load
-    window.addEventListener("DOMContentLoaded", () => {
-      setTimeout(() => {
-        statusText.textContent = "typing...";
-        statusText.classList.add("typing");
-        showTypingBubble();
-
-        setTimeout(() => {
-          removeTypingBubble();
-          statusText.textContent = "online";
-          statusText.classList.remove("typing");
-          const openingLine = "You have reached the private line of Victor Von Doom. State your business—before I lose interest.";
-          appendMessage(openingLine, "incoming");
-          conversationHistory.push({ role: "assistant", content: openingLine });
-        }, 1100);
-      }, 500);
+    document.getElementById("updatesTabBtn").addEventListener("click", () => {
+      alert("J.A.R.V.I.S. HUD Status: All 5 Multiverse Comms Channels Online.");
     });
+
+    // Initial render
+    renderChatList();
   </script>
 </body>
 </html>
