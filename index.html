@@ -1228,4 +1228,53 @@
     filterBar.addEventListener("click", (e) => {
       const pill = e.target.closest(".wa-pill");
       if (!pill) return;
-      docume
+      document.querySelectorAll(".wa-pill").forEach((p) => p.classList.remove("active"));
+      pill.classList.add("active");
+      activeFilter = pill.getAttribute("data-filter");
+      renderChatList();
+    });
+
+    messageInput.addEventListener("input", () => {
+      messageInput.style.height = "auto";
+      messageInput.style.height = Math.min(messageInput.scrollHeight, 96) + "px";
+    });
+
+    messageInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    sendBtn.addEventListener("click", () => sendMessage());
+
+    resetChatBtn.addEventListener("click", () => {
+      if (!activeChar || isReplying) return;
+      chatHistories[activeChar.id] = [
+        { sender: "incoming", text: activeChar.openingLine, time: getTimeNow() }
+      ];
+      openCharacterChat(activeChar.id);
+    });
+
+    openProfileBtn.addEventListener("click", () => {
+      if (!activeChar) return;
+      document.getElementById("modalAvatar").innerHTML = activeChar.avatarSVG;
+      document.getElementById("modalName").textContent = activeChar.name;
+      document.getElementById("modalHandle").textContent = activeChar.handle;
+      document.getElementById("modalBio").innerHTML = `<strong>About:</strong><br/>${activeChar.bio}`;
+      profileModal.classList.add("open");
+    });
+
+    closeModalBtn.addEventListener("click", () => profileModal.classList.remove("open"));
+    profileModal.addEventListener("click", (e) => {
+      if (e.target === profileModal) profileModal.classList.remove("open");
+    });
+
+    document.getElementById("updatesTabBtn").addEventListener("click", () => {
+      alert("All 5 characters are currently active in Chats.");
+    });
+
+    renderChatList();
+  </script>
+</body>
+</html>
