@@ -3,27 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>StarkChat | Stark Industries Encrypted Comms</title>
-  <meta name="description" content="Stark Industries Multiverse Messaging Interface. Powered by J.A.R.V.I.S." />
+  <title>WhatsApp</title>
+  <meta name="description" content="Chat with fictional characters in a familiar WhatsApp interface." />
   <style>
     :root {
-      /* Stark Industries + WhatsApp Hybrid Palette */
-      --bg-outer: #04070d;
-      --bg-app: #080d16;
-      --bg-header: #0f1726;
-      --bg-surface: #131d31;
-      --bg-hover: #18253d;
-      --bg-incoming: #131d31;
-      --bg-outgoing: #0c3b54;
-      --bg-system: #0d192b;
-      --text-primary: #eef6ff;
-      --text-secondary: #7e97b8;
-      --arc-cyan: #00d8ff;
-      --arc-cyan-dim: rgba(0, 216, 255, 0.16);
-      --stark-gold: #f59e0b;
-      --tick-grey: #7e97b8;
-      --tick-blue: #00d8ff;
-      --border-hud: rgba(0, 216, 255, 0.16);
+      --bg-outer: #080d10;
+      --bg-app: #0b141a;
+      --bg-header: #202c33;
+      --bg-surface: #111b21;
+      --bg-input: #2a3942;
+      --bg-hover: #182229;
+      --bg-incoming: #202c33;
+      --bg-outgoing: #005c4b;
+      --bg-system: #182229;
+      --text-primary: #e9edef;
+      --text-secondary: #8696a0;
+      --text-system: #ffd279;
+      --wa-green: #00a884;
+      --wa-green-soft: rgba(0, 168, 132, 0.16);
+      --tick-grey: #8696a0;
+      --tick-blue: #53bdeb;
+      --border-subtle: rgba(134, 150, 160, 0.14);
     }
 
     * {
@@ -55,29 +55,28 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 0 50px rgba(0, 216, 255, 0.12), 0 16px 40px rgba(0, 0, 0, 0.8);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.7);
     }
 
     @media (min-width: 520px) {
       .app-shell {
         height: 94dvh;
-        border-radius: 16px;
-        border: 1px solid var(--border-hud);
+        border-radius: 12px;
+        border: 1px solid var(--border-subtle);
       }
     }
 
-    /* Views (Home vs Active Chat) */
     .view {
       position: absolute;
       inset: 0;
       display: flex;
       flex-direction: column;
       background-color: var(--bg-app);
-      transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease;
+      transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
     }
 
     .view.hidden-left {
-      transform: translateX(-28%);
+      transform: translateX(-25%);
       opacity: 0;
       pointer-events: none;
     }
@@ -88,85 +87,50 @@
       pointer-events: none;
     }
 
-    /* ================= HOME VIEW (STARKCHAT) ================= */
-    .home-header {
-      background-color: var(--bg-header);
-      padding: 14px 16px 10px 16px;
-      border-bottom: 1px solid var(--border-hud);
+    /* ================= WHATSAPP HOME VIEW ================= */
+    .wa-top-header {
+      background-color: var(--bg-app);
+      padding: 14px 16px 8px 16px;
     }
 
-    .brand-bar {
+    .wa-title-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 12px;
     }
 
-    .brand-title-group {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-    .arc-logo {
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      border: 2px solid var(--arc-cyan);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 10px rgba(0, 216, 255, 0.5);
-    }
-
-    .arc-logo-core {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--arc-cyan);
-      box-shadow: 0 0 8px var(--arc-cyan);
-    }
-
-    .brand-name {
-      font-size: 21px;
+    .wa-brand {
+      font-size: 22px;
       font-weight: 700;
-      letter-spacing: 0.4px;
       color: var(--text-primary);
+      letter-spacing: -0.2px;
     }
 
-    .brand-name span {
-      color: var(--arc-cyan);
+    .wa-header-badge {
+      font-size: 11px;
+      color: var(--wa-green);
+      background: var(--wa-green-soft);
+      padding: 3px 9px;
+      border-radius: 12px;
+      font-weight: 600;
     }
 
-    .stark-tag {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--stark-gold);
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      padding: 3px 7px;
-      border-radius: 6px;
-    }
-
-    /* WhatsApp-style Search Bar */
-    .search-box {
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-hud);
-      border-radius: 20px;
+    .wa-search-box {
+      background-color: var(--bg-header);
+      border-radius: 22px;
       padding: 8px 14px;
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 10px;
     }
 
-    .search-box svg {
+    .wa-search-box svg {
       color: var(--text-secondary);
       flex-shrink: 0;
     }
 
-    .search-box input {
+    .wa-search-box input {
       width: 100%;
       background: transparent;
       border: none;
@@ -175,12 +139,11 @@
       font-size: 14px;
     }
 
-    .search-box input::placeholder {
+    .wa-search-box input::placeholder {
       color: var(--text-secondary);
     }
 
-    /* Filter Chips (All, Unread, Heroes, Villains) */
-    .filter-bar {
+    .wa-filters {
       display: flex;
       gap: 8px;
       padding: 10px 16px 8px 16px;
@@ -188,30 +151,29 @@
       scrollbar-width: none;
     }
 
-    .filter-bar::-webkit-scrollbar {
+    .wa-filters::-webkit-scrollbar {
       display: none;
     }
 
-    .filter-pill {
-      background-color: var(--bg-surface);
+    .wa-pill {
+      background-color: var(--bg-header);
       color: var(--text-secondary);
-      border: 1px solid transparent;
-      padding: 6px 13px;
-      border-radius: 16px;
-      font-size: 12.5px;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 18px;
+      font-size: 13px;
       font-weight: 500;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.15s ease;
+      transition: background-color 0.15s, color 0.15s;
     }
 
-    .filter-pill.active {
-      background-color: var(--arc-cyan-dim);
-      color: var(--arc-cyan);
-      border-color: rgba(0, 216, 255, 0.4);
+    .wa-pill.active {
+      background-color: var(--wa-green-soft);
+      color: var(--wa-green);
+      font-weight: 600;
     }
 
-    /* Chat List */
     .chat-list {
       flex: 1;
       overflow-y: auto;
@@ -222,10 +184,9 @@
       display: flex;
       align-items: center;
       gap: 13px;
-      padding: 12px 16px;
+      padding: 11px 16px;
       cursor: pointer;
-      transition: background 0.15s ease;
-      border-bottom: 1px solid rgba(126, 151, 184, 0.06);
+      transition: background-color 0.14s ease;
     }
 
     .chat-row:hover, .chat-row:active {
@@ -233,13 +194,12 @@
     }
 
     .avatar {
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       overflow: hidden;
       flex-shrink: 0;
-      border: 1.5px solid rgba(0, 216, 255, 0.45);
-      background: var(--bg-surface);
+      background: var(--bg-header);
     }
 
     .avatar svg {
@@ -251,38 +211,44 @@
     .chat-row-body {
       flex: 1;
       min-width: 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .chat-row:last-child .chat-row-body {
+      border-bottom: none;
     }
 
     .chat-row-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .chat-row-name {
-      font-size: 15.5px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 500;
       color: var(--text-primary);
       display: flex;
       align-items: center;
       gap: 5px;
     }
 
-    .verified-icon {
+    .verified-badge {
       width: 15px;
       height: 15px;
-      fill: var(--arc-cyan);
+      fill: var(--wa-green);
       flex-shrink: 0;
     }
 
     .chat-row-time {
-      font-size: 11.5px;
+      font-size: 12px;
       color: var(--text-secondary);
     }
 
-    .chat-row-time.has-unread {
-      color: var(--arc-cyan);
+    .chat-row-time.unread {
+      color: var(--wa-green);
       font-weight: 600;
     }
 
@@ -294,7 +260,7 @@
     }
 
     .chat-row-preview {
-      font-size: 13.5px;
+      font-size: 14px;
       color: var(--text-secondary);
       white-space: nowrap;
       overflow: hidden;
@@ -302,9 +268,9 @@
     }
 
     .unread-badge {
-      background-color: var(--arc-cyan);
-      color: #04101a;
-      font-size: 11px;
+      background-color: var(--wa-green);
+      color: #0b141a;
+      font-size: 11.5px;
       font-weight: 700;
       min-width: 20px;
       height: 20px;
@@ -316,51 +282,51 @@
       flex-shrink: 0;
     }
 
-    .pin-icon {
+    .pin-label {
+      font-size: 12px;
       color: var(--text-secondary);
-      opacity: 0.7;
     }
 
-    /* Bottom Navigation Bar (WhatsApp Style) */
-    .bottom-nav {
-      background-color: var(--bg-header);
-      border-top: 1px solid var(--border-hud);
+    .wa-bottom-nav {
+      background-color: var(--bg-app);
+      border-top: 1px solid var(--border-subtle);
       display: flex;
       justify-content: space-around;
       padding: 8px 0 10px 0;
     }
 
-    .nav-item {
+    .wa-nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 4px;
       color: var(--text-secondary);
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 500;
       cursor: pointer;
     }
 
-    .nav-item.active {
-      color: var(--arc-cyan);
+    .wa-nav-item.active {
+      color: var(--text-primary);
     }
 
-    .nav-pill {
-      padding: 3px 16px;
-      border-radius: 14px;
+    .wa-nav-pill {
+      padding: 4px 18px;
+      border-radius: 16px;
     }
 
-    .nav-item.active .nav-pill {
-      background-color: var(--arc-cyan-dim);
+    .wa-nav-item.active .wa-nav-pill {
+      background-color: var(--wa-green-soft);
+      color: var(--wa-green);
     }
 
-    /* ================= ACTIVE CHAT VIEW ================= */
+    /* ================= WHATSAPP CHAT VIEW ================= */
     .chat-wallpaper {
       position: absolute;
       inset: 0;
-      opacity: 0.06;
+      opacity: 0.055;
       pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg width='90' height='90' viewBox='0 0 90 90' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2300d8ff' stroke-width='1.2'%3E%3Ccircle cx='45' cy='45' r='16'/%3E%3Ccircle cx='45' cy='45' r='6'/%3E%3Cpath d='M45 10v12M45 68v12M10 45h12M68 45h12'/%3E%3C/g%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23e9edef' stroke-width='1.5'%3E%3Cpath d='M15 15h10v10H15zM55 15l7 10H48zM20 55a6 6 0 1 0 0.001 0zM52 52l12 12M64 52L52 64M38 35l4-7 4 7-4 7z'/%3E%3C/g%3E%3C/svg%3E");
       background-size: 90px 90px;
       z-index: 0;
     }
@@ -371,7 +337,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border-hud);
+      border-bottom: 1px solid var(--border-subtle);
       z-index: 10;
       min-height: 62px;
     }
@@ -379,14 +345,14 @@
     .chat-header-left {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       min-width: 0;
     }
 
     .back-btn {
       background: none;
       border: none;
-      color: var(--arc-cyan);
+      color: var(--text-primary);
       cursor: pointer;
       padding: 6px;
       border-radius: 50%;
@@ -409,7 +375,7 @@
     }
 
     .chat-contact-name {
-      font-size: 15.5px;
+      font-size: 16px;
       font-weight: 600;
       display: flex;
       align-items: center;
@@ -422,7 +388,7 @@
     }
 
     .chat-contact-status.typing {
-      color: var(--arc-cyan);
+      color: var(--wa-green);
       font-weight: 500;
     }
 
@@ -439,8 +405,8 @@
     }
 
     .icon-btn:hover {
-      background: rgba(0, 216, 255, 0.1);
-      color: var(--arc-cyan);
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-primary);
     }
 
     .messages-area {
@@ -456,39 +422,37 @@
 
     .date-pill {
       align-self: center;
-      background-color: var(--bg-surface);
+      background-color: var(--bg-system);
       color: var(--text-secondary);
       font-size: 11px;
       font-weight: 600;
-      padding: 4px 12px;
+      padding: 5px 12px;
       border-radius: 8px;
       margin-bottom: 6px;
-      letter-spacing: 0.5px;
       text-transform: uppercase;
     }
 
     .system-banner {
       align-self: center;
       background-color: var(--bg-system);
-      border: 1px solid var(--border-hud);
-      color: var(--stark-gold);
+      color: var(--text-system);
       font-size: 11.5px;
       line-height: 1.4;
       text-align: center;
       padding: 7px 12px;
       border-radius: 8px;
-      max-width: 90%;
+      max-width: 88%;
       margin-bottom: 10px;
     }
 
     .message-row {
       display: flex;
       width: 100%;
-      animation: msgIn 0.18s ease-out;
+      animation: msgIn 0.16s ease-out;
     }
 
     @keyframes msgIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(5px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -498,17 +462,16 @@
     .bubble {
       position: relative;
       max-width: 82%;
-      padding: 8px 11px;
-      border-radius: 10px;
+      padding: 7px 10px 7px 11px;
+      border-radius: 8px;
       font-size: 14.5px;
       line-height: 1.42;
       word-wrap: break-word;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 1px 1.5px rgba(0, 0, 0, 0.28);
     }
 
     .incoming .bubble {
       background-color: var(--bg-incoming);
-      border: 1px solid rgba(0, 216, 255, 0.12);
       border-top-left-radius: 0;
       margin-left: 6px;
     }
@@ -524,7 +487,6 @@
 
     .outgoing .bubble {
       background-color: var(--bg-outgoing);
-      border: 1px solid rgba(0, 216, 255, 0.25);
       border-top-right-radius: 0;
       margin-right: 6px;
     }
@@ -544,29 +506,29 @@
       gap: 4px;
       float: right;
       margin: 4px 0 -3px 10px;
-      font-size: 10.5px;
-      color: rgba(238, 246, 255, 0.65);
+      font-size: 11px;
+      color: rgba(233, 237, 239, 0.65);
     }
 
     .typing-bubble {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 12px 15px;
+      padding: 11px 14px;
     }
 
     .dot {
-      width: 6px;
-      height: 6px;
-      background-color: var(--arc-cyan);
+      width: 6.5px;
+      height: 6.5px;
+      background-color: var(--text-secondary);
       border-radius: 50%;
-      animation: pulseDot 1.3s infinite ease-in-out;
+      animation: bounceDot 1.3s infinite ease-in-out;
     }
     .dot:nth-child(2) { animation-delay: 0.16s; }
     .dot:nth-child(3) { animation-delay: 0.32s; }
 
-    @keyframes pulseDot {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+    @keyframes bounceDot {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
       30% { transform: translateY(-4px); opacity: 1; }
     }
 
@@ -581,20 +543,20 @@
     .quick-replies::-webkit-scrollbar { display: none; }
 
     .chip {
-      background-color: var(--bg-surface);
-      border: 1px solid rgba(0, 216, 255, 0.32);
-      color: var(--text-primary);
+      background-color: var(--bg-header);
+      border: 1px solid rgba(0, 168, 132, 0.35);
+      color: #d1d7db;
       font-size: 12.5px;
       padding: 6px 12px;
       border-radius: 16px;
       white-space: nowrap;
       cursor: pointer;
-      transition: all 0.15s ease;
     }
 
     .chip:hover {
       background-color: var(--bg-outgoing);
-      border-color: var(--arc-cyan);
+      border-color: var(--wa-green);
+      color: #fff;
     }
 
     .input-bar {
@@ -603,14 +565,12 @@
       display: flex;
       align-items: flex-end;
       gap: 8px;
-      border-top: 1px solid var(--border-hud);
       z-index: 10;
     }
 
     .input-wrapper {
       flex: 1;
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-hud);
+      background-color: var(--bg-input);
       border-radius: 22px;
       padding: 9px 15px;
     }
@@ -635,23 +595,22 @@
       height: 44px;
       border-radius: 50%;
       border: none;
-      background-color: var(--arc-cyan);
-      color: #04101a;
+      background-color: var(--wa-green);
+      color: #0b141a;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       flex-shrink: 0;
-      box-shadow: 0 0 14px rgba(0, 216, 255, 0.4);
     }
 
     .send-btn:active { transform: scale(0.93); }
 
-    /* Profile Modal */
+    /* Contact Info Modal */
     .modal-backdrop {
       position: absolute;
       inset: 0;
-      background: rgba(4, 7, 13, 0.78);
+      background: rgba(0, 0, 0, 0.72);
       display: none;
       align-items: center;
       justify-content: center;
@@ -663,13 +622,12 @@
 
     .profile-card {
       background: var(--bg-header);
-      border: 1px solid var(--border-hud);
       width: 100%;
       max-width: 340px;
-      border-radius: 16px;
+      border-radius: 14px;
       padding: 22px;
       text-align: center;
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.75);
+      border: 1px solid var(--border-subtle);
     }
 
     .profile-card .large-avatar {
@@ -678,31 +636,30 @@
       margin: 0 auto 12px auto;
       border-radius: 50%;
       overflow: hidden;
-      border: 2px solid var(--arc-cyan);
+      border: 2px solid var(--wa-green);
     }
 
     .profile-card h2 { font-size: 18px; margin-bottom: 4px; }
-    .profile-card .subtitle { font-size: 12.5px; color: var(--arc-cyan); margin-bottom: 14px; }
+    .profile-card .subtitle { font-size: 12.5px; color: var(--wa-green); margin-bottom: 14px; }
     .profile-card .bio {
       background: var(--bg-app);
-      border: 1px solid var(--border-hud);
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 8px;
       font-size: 13px;
-      color: #cfe3fa;
+      color: #d1d7db;
       text-align: left;
       line-height: 1.45;
       margin-bottom: 16px;
     }
 
     .close-modal-btn {
-      background: var(--arc-cyan);
-      color: #04101a;
+      background: var(--wa-green);
+      color: #0b141a;
       border: none;
       padding: 9px 22px;
       border-radius: 20px;
-      font-weight: 700;
-      font-size: 13px;
+      font-weight: 600;
+      font-size: 13.5px;
       cursor: pointer;
     }
   </style>
@@ -710,63 +667,60 @@
 <body>
   <div class="app-shell">
 
-    <!-- ==================== VIEW 1: STARKCHAT HOME ==================== -->
+    <!-- ================= VIEW 1: WHATSAPP CHATS HOME ================= -->
     <section class="view" id="homeView">
-      <header class="home-header">
-        <div class="brand-bar">
-          <div class="brand-title-group">
-            <div class="arc-logo"><div class="arc-logo-core"></div></div>
-            <h1 class="brand-name">Stark<span>Chat</span></h1>
-          </div>
-          <span class="stark-tag">J.A.R.V.I.S. OS</span>
+      <header class="wa-top-header">
+        <div class="wa-title-row">
+          <h1 class="wa-brand">WhatsApp</h1>
+          <span class="wa-header-badge">Characters Hub</span>
         </div>
 
-        <div class="search-box">
+        <div class="wa-search-box">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-          <input type="text" id="searchInput" placeholder="Ask J.A.R.V.I.S. or search contacts..." />
+          <input type="text" id="searchInput" placeholder="Search or start new chat" />
         </div>
       </header>
 
-      <div class="filter-bar" id="filterBar">
-        <button class="filter-pill active" data-filter="All">All</button>
-        <button class="filter-pill" data-filter="Unread">Unread</button>
-        <button class="filter-pill" data-filter="Heroes">Heroes</button>
-        <button class="filter-pill" data-filter="Villains">Villains</button>
-        <button class="filter-pill" data-filter="Detectives">Detectives</button>
+      <div class="wa-filters" id="filterBar">
+        <button class="wa-pill active" data-filter="All">All</button>
+        <button class="wa-pill" data-filter="Unread">Unread</button>
+        <button class="wa-pill" data-filter="Villains">Villains</button>
+        <button class="wa-pill" data-filter="Heroes">Heroes</button>
+        <button class="wa-pill" data-filter="Detectives">Detectives</button>
       </div>
 
       <div class="chat-list" id="chatList"></div>
 
-      <nav class="bottom-nav">
-        <div class="nav-item active">
-          <div class="nav-pill">
+      <nav class="wa-bottom-nav">
+        <div class="wa-nav-item active">
+          <div class="wa-nav-pill">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
               <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
             </svg>
           </div>
           <span>Chats</span>
         </div>
-        <div class="nav-item" id="updatesTabBtn">
-          <div class="nav-pill">
+        <div class="wa-nav-item" id="updatesTabBtn">
+          <div class="wa-nav-pill">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>
+              <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
             </svg>
           </div>
-          <span>HUD Status</span>
+          <span>Updates</span>
         </div>
       </nav>
     </section>
 
-    <!-- ==================== VIEW 2: ACTIVE CHAT ==================== -->
+    <!-- ================= VIEW 2: WHATSAPP CHAT ROOM ================= -->
     <section class="view hidden-right" id="chatView">
       <div class="chat-wallpaper"></div>
 
       <header class="chat-header">
         <div class="chat-header-left">
-          <button class="back-btn" id="backToHomeBtn" aria-label="Back to StarkChat">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+          <button class="back-btn" id="backToHomeBtn" aria-label="Back">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
               <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
             </svg>
           </button>
@@ -776,7 +730,7 @@
             <div>
               <div class="chat-contact-name">
                 <span id="chatHeaderName">Victor Von Doom</span>
-                <svg class="verified-icon" viewBox="0 0 24 24">
+                <svg class="verified-badge" viewBox="0 0 24 24">
                   <path d="M12 2L14.8 4.4L18.5 4.1L19.6 7.6L22.7 9.6L21.6 13.1L22.7 16.6L19.6 18.6L18.5 22.1L14.8 21.8L12 24.2L9.2 21.8L5.5 22.1L4.4 18.6L1.3 16.6L2.4 13.1L1.3 9.6L4.4 7.6L5.5 4.1L9.2 4.4L12 2ZM10.4 16.3L17.1 9.6L15.7 8.2L10.4 13.5L8.1 11.2L6.7 12.6L10.4 16.3Z"/>
                 </svg>
               </div>
@@ -785,7 +739,7 @@
           </div>
         </div>
 
-        <button class="icon-btn" id="resetChatBtn" title="Reset Channel">
+        <button class="icon-btn" id="resetChatBtn" title="Reset Chat">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
           </svg>
@@ -798,7 +752,7 @@
 
       <footer class="input-bar">
         <div class="input-wrapper">
-          <textarea id="messageInput" rows="1" placeholder="Transmit encrypted message..."></textarea>
+          <textarea id="messageInput" rows="1" placeholder="Message"></textarea>
         </div>
         <button class="send-btn" id="sendBtn" aria-label="Send">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -808,23 +762,248 @@
       </footer>
     </section>
 
-    <!-- Contact Dossier Modal -->
+    <!-- Contact Info Modal -->
     <div class="modal-backdrop" id="profileModal">
       <div class="profile-card">
         <div class="large-avatar" id="modalAvatar"></div>
         <h2 id="modalName">Name</h2>
         <div class="subtitle" id="modalHandle">Handle</div>
-        <div class="bio" id="modalBio">Bio</div>
-        <button class="close-modal-btn" id="closeModalBtn">Close Dossier</button>
+        <div class="bio" id="modalBio">About</div>
+        <button class="close-modal-btn" id="closeModalBtn">Close</button>
       </div>
     </div>
 
   </div>
 
-  <!-- Load Character Roster & Scripted Engines -->
-  <script src="./characters.js"></script>
-
   <script>
+    const CHARACTERS = [
+      {
+        id: "doom",
+        name: "Victor Von Doom",
+        handle: "Monarch of Latveria • +40 000 DOOM",
+        category: "Villains",
+        pinned: true,
+        unread: 1,
+        lastTime: "08:08 PM",
+        status: "online",
+        bio: "All hope lies in Doom. Speak plainly or do not message at all.",
+        openingLine: "You have reached the private line of Victor Von Doom. State your business—before I lose interest.",
+        chips: [
+          { label: "Thoughts on Reed Richards?", msg: "What do you think of Reed Richards?" },
+          { label: "Can I visit Latveria?", msg: "Can I visit Latveria?" },
+          { label: "Why the mask?", msg: "Why do you wear the iron mask?" },
+          { label: "Science or magic?", msg: "Who is stronger: science or magic?" }
+        ],
+        avatarSVG: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="100" fill="#0d261c"/>
+          <path d="M12 96 C12 42, 24 12, 50 12 C76 12, 88 42, 88 96 Z" fill="#14532d"/>
+          <path d="M22 92 C22 48, 32 22, 50 22 C68 22, 78 48, 78 92 Z" fill="#091a12"/>
+          <path d="M31 38 L50 32 L69 38 L66 72 L50 84 L34 72 Z" fill="#9ca3af"/>
+          <path d="M50 32 L69 38 L66 72 L50 84 Z" fill="#6b7280"/>
+          <polygon points="34,46 47,50 36,52" fill="#111827"/>
+          <polygon points="66,46 53,50 64,52" fill="#111827"/>
+          <circle cx="41" cy="49.5" r="1.8" fill="#fef08a"/>
+          <circle cx="59" cy="49.5" r="1.8" fill="#fef08a"/>
+          <rect x="40" y="64" width="20" height="9" rx="2" fill="#374151"/>
+          <line x1="44" y1="64" x2="44" y2="73" stroke="#111827" stroke-width="1.5"/>
+          <line x1="48" y1="64" x2="48" y2="73" stroke="#111827" stroke-width="1.5"/>
+          <line x1="52" y1="64" x2="52" y2="73" stroke="#111827" stroke-width="1.5"/>
+          <line x1="56" y1="64" x2="56" y2="73" stroke="#111827" stroke-width="1.5"/>
+        </svg>`,
+        getReply(input) {
+          const t = input.toLowerCase();
+          if (t.includes("reed") || t.includes("richards") || t.includes("fantastic")) {
+            return "Do not sully this private channel with the name of that arrogant stretch-limbed fool. Richards mistakes luck for genius. Doom deals in perfection.";
+          }
+          if (t.includes("latveria") || t.includes("visit") || t.includes("country")) {
+            return "Latveria knows neither poverty, crime, nor hunger—because Doom wills it so. You may apply for a 48-hour diplomatic visa at the border. Do not litter.";
+          }
+          if (t.includes("mask") || t.includes("face") || t.includes("scar")) {
+            return "This visage of cold titanium is the face of absolute authority. A sovereign does not display human weakness to lesser men.";
+          }
+          if (t.includes("magic") || t.includes("science") || t.includes("stronger")) {
+            return "Only a narrow mind separates the two. Where Reed Richards hits a wall of physics, Doom bends the astral plane to his command. I have mastered both.";
+          }
+          if (t.includes("stark") || t.includes("iron man") || t.includes("tony")) {
+            return "Stark builds toys in a garage and calls himself a futurist. My armor is forged from titanium, nuclear micro-reactors, and ancient sorcery. There is no comparison.";
+          }
+          if (t.includes("hi") || t.includes("hello") || t.includes("hey")) {
+            return "Speak plainly, mortal. Doom governs a sovereign nation and has little time for idle chatter.";
+          }
+          const pool = [
+            "Doom has already calculated forty-seven outcomes to this conversation. Impress me with the forty-eighth.",
+            "An intriguing thought—for one of limited intellect. Elaborate, if you dare.",
+            "You text the ruler of Latveria as though we were peers. Bold. Foolish, yet bold."
+          ];
+          return pool[Math.floor(Math.random() * pool.length)];
+        }
+      },
+      {
+        id: "stark",
+        name: "Tony Stark",
+        handle: "Genius, Billionaire • +1 212 970 4133",
+        category: "Heroes",
+        pinned: true,
+        unread: 2,
+        lastTime: "08:04 PM",
+        status: "online",
+        bio: "Available for world-saving and late-night workshop builds.",
+        openingLine: "Hey! Glad you're here. JARVIS says you have good taste in messaging apps. What's up?",
+        chips: [
+          { label: "Iron Man suit?", msg: "Can you build me an Iron Man suit?" },
+          { label: "Thoughts on Doom?", msg: "What do you think of Dr. Doom?" },
+          { label: "Shawarma later?", msg: "Want to grab shawarma?" }
+        ],
+        avatarSVG: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="100" fill="#1e0a0a"/>
+          <path d="M26 24 L50 16 L74 24 L70 76 L50 88 L30 76 Z" fill="#b91c1c"/>
+          <path d="M33 32 L50 28 L67 32 L63 72 L50 81 L37 72 Z" fill="#f59e0b"/>
+          <polygon points="35,44 47,48 36,51" fill="#e0f2fe"/>
+          <polygon points="65,44 53,48 64,51" fill="#e0f2fe"/>
+          <path d="M40 66 L60 66 L57 71 L43 71 Z" fill="#991b1b"/>
+        </svg>`,
+        getReply(input) {
+          const t = input.toLowerCase();
+          if (t.includes("suit") || t.includes("armor") || t.includes("fly")) {
+            return "Nanotech suits don't grow on trees, kid. Ace your math and physics first, then come talk to me.";
+          }
+          if (t.includes("doom") || t.includes("victor") || t.includes("latveria")) {
+            return "Victor's got serious ego issues and a cape that drags on the floor. Too much metal, not enough chill.";
+          }
+          if (t.includes("shawarma") || t.includes("food") || t.includes("hungry")) {
+            return "Best shawarma spot in town is right around the corner. Don't be late.";
+          }
+          const pool = [
+            "Running diagnostics on the Mark LXXXV while I read this—go on.",
+            "Pepper says I need to take a break. Naturally, I ignored her and answered you instead.",
+            "Not a bad angle. Let me crunch the numbers and get back to you."
+          ];
+          return pool[Math.floor(Math.random() * pool.length)];
+        }
+      },
+      {
+        id: "deadpool",
+        name: "Deadpool",
+        handle: "Merc with a Mouth • Chimichanga Fan Club",
+        category: "Villains",
+        pinned: false,
+        unread: 3,
+        lastTime: "07:51 PM",
+        status: "online",
+        bio: "Maximum effort. Yes, I know I'm inside a website.",
+        openingLine: "Oh hey! You actually clicked my chat. I thought you were gonna ignore me for the guy in the green hood.",
+        chips: [
+          { label: "Wolverine update?", msg: "Where is Wolverine right now?" },
+          { label: "Chimichangas?", msg: "Do you want chimichangas?" },
+          { label: "Rate this site", msg: "How do you like this website?" }
+        ],
+        avatarSVG: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="100" fill="#18181b"/>
+          <ellipse cx="50" cy="52" rx="28" ry="34" fill="#dc2626"/>
+          <path d="M28 42 C32 34, 44 38, 45 50 C44 60, 32 62, 28 52 Z" fill="#09090b"/>
+          <path d="M72 42 C68 34, 56 38, 55 50 C56 60, 68 62, 72 52 Z" fill="#09090b"/>
+          <ellipse cx="37" cy="49" rx="4.5" ry="2.5" fill="#ffffff"/>
+          <ellipse cx="63" cy="49" rx="4.5" ry="2.5" fill="#ffffff"/>
+        </svg>`,
+        getReply(input) {
+          const t = input.toLowerCase();
+          if (t.includes("wolverine") || t.includes("logan")) {
+            return "Logan is grumpy as usual. Probably sharpening his claws because I sent him three memes in a row.";
+          }
+          if (t.includes("chimichanga") || t.includes("food") || t.includes("taco")) {
+            return "Did someone say CHIMICHANGAS?! Say less, I'm already halfway there.";
+          }
+          if (t.includes("website") || t.includes("site") || t.includes("app")) {
+            return "Clean WhatsApp layout, fast loading, zero drama. Honestly? Pretty solid.";
+          }
+          const pool = [
+            "Maximum effort! Also don't forget to drink some water while scrolling.",
+            "Keep it spicy—boring texts put my healing factor to sleep.",
+            "I'm definitely the funniest contact on your list. Don't argue with me."
+          ];
+          return pool[Math.floor(Math.random() * pool.length)];
+        }
+      },
+      {
+        id: "batman",
+        name: "Bruce Wayne",
+        handle: "Gotham • +1 555 019 2834",
+        category: "Heroes",
+        pinned: false,
+        unread: 0,
+        lastTime: "06:15 PM",
+        status: "last seen today at 06:15 PM",
+        bio: "Busy.",
+        openingLine: "Keep this brief. I have a long night ahead in Gotham.",
+        chips: [
+          { label: "Is Gotham safe?", msg: "Is Gotham safe tonight?" },
+          { label: "Why so serious?", msg: "Why don't you smile more?" }
+        ],
+        avatarSVG: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="100" fill="#090d16"/>
+          <polygon points="30,42 32,14 42,34" fill="#1e293b"/>
+          <polygon points="70,42 68,14 58,34" fill="#1e293b"/>
+          <path d="M30 36 L70 36 L66 76 L50 86 L34 76 Z" fill="#1e293b"/>
+          <path d="M36 58 L64 58 L61 74 L50 82 L39 74 Z" fill="#cbd5e1"/>
+          <polygon points="35,47 46,50 36,52" fill="#f8fafc"/>
+          <polygon points="65,47 54,50 64,52" fill="#f8fafc"/>
+          <line x1="44" y1="68" x2="56" y2="68" stroke="#334155" stroke-width="2"/>
+        </svg>`,
+        getReply(input) {
+          const t = input.toLowerCase();
+          if (t.includes("gotham") || t.includes("safe")) {
+            return "Gotham is never completely safe. That's why I don't sleep.";
+          }
+          const pool = [
+            "I'm working. Make it quick.",
+            "Noted.",
+            "Stay out of the alleys after dark."
+          ];
+          return pool[Math.floor(Math.random() * pool.length)];
+        }
+      },
+      {
+        id: "sherlock",
+        name: "Sherlock Holmes",
+        handle: "221B Baker Street • London",
+        category: "Detectives",
+        pinned: false,
+        unread: 1,
+        lastTime: "Yesterday",
+        status: "online",
+        bio: "The game is afoot.",
+        openingLine: "Interesting. You opened this chat looking for clever replies rather than ordinary small talk. Let's see what you bring me.",
+        chips: [
+          { label: "Deduce something", msg: "Deduce something about me." },
+          { label: "Give me a riddle", msg: "Give me a riddle to solve." }
+        ],
+        avatarSVG: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="100" fill="#17202a"/>
+          <ellipse cx="50" cy="30" rx="28" ry="10" fill="#5c4033"/>
+          <path d="M32 30 C32 16, 68 16, 68 30 Z" fill="#6f4e37"/>
+          <path d="M34 34 L66 34 L62 74 L50 84 L38 74 Z" fill="#e2e8f0"/>
+          <circle cx="43" cy="48" r="2.2" fill="#0f172a"/>
+          <circle cx="57" cy="48" r="2.2" fill="#0f172a"/>
+          <path d="M44 66 Q50 63 56 66" stroke="#0f172a" stroke-width="2" fill="none"/>
+        </svg>`,
+        getReply(input) {
+          const t = input.toLowerCase();
+          if (t.includes("deduce")) {
+            return "Elementary: You like clean, familiar interfaces and you're curious enough to test how different characters react.";
+          }
+          if (t.includes("riddle")) {
+            return "What has keys that open no locks, space but no room, and lets you enter without walking in? A keyboard.";
+          }
+          const pool = [
+            "Give me facts, not vague guesses. What are we actually investigating?",
+            "Observation is everything. Most people look without seeing.",
+            "The game is afoot."
+          ];
+          return pool[Math.floor(Math.random() * pool.length)];
+        }
+      }
+    ];
+
     const homeView = document.getElementById("homeView");
     const chatView = document.getElementById("chatView");
     const chatListEl = document.getElementById("chatList");
@@ -850,7 +1029,6 @@
     let activeChar = null;
     let isReplying = false;
 
-    // Store separate message histories per character ID
     const chatHistories = {};
     CHARACTERS.forEach((c) => {
       chatHistories[c.id] = [
@@ -864,18 +1042,17 @@
 
     function getTickSVG(state) {
       if (state === "sent") {
-        return `<svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M11.5 1.5L4.8 8.5L2 5.7" stroke="#7e97b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        return `<svg width="16" height="11" viewBox="0 0 16 11" fill="none"><path d="M11.5 1.5L4.8 8.5L2 5.7" stroke="#8696a0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
       }
-      const color = state === "read" ? "#00d8ff" : "#7e97b8";
+      const color = state === "read" ? "#53bdeb" : "#8696a0";
       return `<svg width="18" height="11" viewBox="0 0 18 11" fill="none">
         <path d="M11.5 1.5L4.8 8.5L2 5.7" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
         <path d="M15.5 1.5L8.8 8.5L7.3 7" stroke="${color}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>`;
     }
 
-    // Render StarkChat Home List
     function renderChatList() {
-      const filtered = CHARACTERS.filter((c) => {
+      const list = CHARACTERS.filter((c) => {
         const matchesSearch =
           c.name.toLowerCase().includes(searchQuery) ||
           c.handle.toLowerCase().includes(searchQuery);
@@ -886,7 +1063,7 @@
       });
 
       chatListEl.innerHTML = "";
-      filtered.forEach((c) => {
+      list.forEach((c) => {
         const history = chatHistories[c.id];
         const lastMsg = history[history.length - 1];
 
@@ -898,11 +1075,11 @@
             <div class="chat-row-top">
               <div class="chat-row-name">
                 <span>${c.name}</span>
-                <svg class="verified-icon" viewBox="0 0 24 24">
+                <svg class="verified-badge" viewBox="0 0 24 24">
                   <path d="M12 2L14.8 4.4L18.5 4.1L19.6 7.6L22.7 9.6L21.6 13.1L22.7 16.6L19.6 18.6L18.5 22.1L14.8 21.8L12 24.2L9.2 21.8L5.5 22.1L4.4 18.6L1.3 16.6L2.4 13.1L1.3 9.6L4.4 7.6L5.5 4.1L9.2 4.4L12 2ZM10.4 16.3L17.1 9.6L15.7 8.2L10.4 13.5L8.1 11.2L6.7 12.6L10.4 16.3Z"/>
                 </svg>
               </div>
-              <span class="chat-row-time ${c.unread > 0 ? "has-unread" : ""}">${lastMsg.time}</span>
+              <span class="chat-row-time ${c.unread > 0 ? "unread" : ""}">${lastMsg.time}</span>
             </div>
             <div class="chat-row-bottom">
               <div class="chat-row-preview">${lastMsg.sender === "outgoing" ? "You: " : ""}${lastMsg.text}</div>
@@ -910,7 +1087,7 @@
                 c.unread > 0
                   ? `<span class="unread-badge">${c.unread}</span>`
                   : c.pinned
-                  ? `<span class="pin-icon">📌</span>`
+                  ? `<span class="pin-label">📌</span>`
                   : ""
               }
             </div>
@@ -921,7 +1098,6 @@
       });
     }
 
-    // Open Specific Character Chat
     function openCharacterChat(charId) {
       activeChar = CHARACTERS.find((c) => c.id === charId);
       if (!activeChar) return;
@@ -934,11 +1110,10 @@
       chatHeaderStatus.textContent = activeChar.status;
       chatHeaderStatus.classList.remove("typing");
 
-      // Render stored messages
       messagesArea.innerHTML = `
         <div class="date-pill">Today</div>
         <div class="system-banner">
-          ⚡ Secured by Stark Industries Quantum-AES Encryption via J.A.R.V.I.S. Relay.
+          🔒 Messages are end-to-end encrypted. No one outside of this chat can read them.
         </div>
       `;
 
@@ -946,7 +1121,6 @@
         appendBubbleDOM(m.text, m.sender, m.time, "read");
       });
 
-      // Render character-specific quick chips
       quickReplies.innerHTML = "";
       activeChar.chips.forEach((chip) => {
         const btn = document.createElement("button");
@@ -1006,8 +1180,8 @@
       }
 
       const time = getTimeNow();
-      const currentTarget = activeChar;
-      chatHistories[currentTarget.id].push({ sender: "outgoing", text, time });
+      const target = activeChar;
+      chatHistories[target.id].push({ sender: "outgoing", text, time });
 
       const row = appendBubbleDOM(text, "outgoing", time, "sent");
 
@@ -1029,12 +1203,12 @@
       await sleep(950);
 
       typingRow.remove();
-      chatHeaderStatus.textContent = currentTarget.status;
+      chatHeaderStatus.textContent = target.status;
       chatHeaderStatus.classList.remove("typing");
 
-      const replyText = currentTarget.getReply(text);
+      const replyText = target.getReply(text);
       const replyTime = getTimeNow();
-      chatHistories[currentTarget.id].push({
+      chatHistories[target.id].push({
         sender: "incoming",
         text: replyText,
         time: replyTime
@@ -1044,7 +1218,6 @@
       isReplying = false;
     }
 
-    // Event Listeners
     backToHomeBtn.addEventListener("click", closeCharacterChat);
 
     searchInput.addEventListener("input", (e) => {
@@ -1053,56 +1226,6 @@
     });
 
     filterBar.addEventListener("click", (e) => {
-      const pill = e.target.closest(".filter-pill");
+      const pill = e.target.closest(".wa-pill");
       if (!pill) return;
-      document.querySelectorAll(".filter-pill").forEach((p) => p.classList.remove("active"));
-      pill.classList.add("active");
-      activeFilter = pill.getAttribute("data-filter");
-      renderChatList();
-    });
-
-    messageInput.addEventListener("input", () => {
-      messageInput.style.height = "auto";
-      messageInput.style.height = Math.min(messageInput.scrollHeight, 96) + "px";
-    });
-
-    messageInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-
-    sendBtn.addEventListener("click", () => sendMessage());
-
-    resetChatBtn.addEventListener("click", () => {
-      if (!activeChar || isReplying) return;
-      chatHistories[activeChar.id] = [
-        { sender: "incoming", text: activeChar.openingLine, time: getTimeNow() }
-      ];
-      openCharacterChat(activeChar.id);
-    });
-
-    openProfileBtn.addEventListener("click", () => {
-      if (!activeChar) return;
-      document.getElementById("modalAvatar").innerHTML = activeChar.avatarSVG;
-      document.getElementById("modalName").textContent = activeChar.name;
-      document.getElementById("modalHandle").textContent = activeChar.handle;
-      document.getElementById("modalBio").innerHTML = `<strong>J.A.R.V.I.S. Dossier:</strong><br/>${activeChar.bio}`;
-      profileModal.classList.add("open");
-    });
-
-    closeModalBtn.addEventListener("click", () => profileModal.classList.remove("open"));
-    profileModal.addEventListener("click", (e) => {
-      if (e.target === profileModal) profileModal.classList.remove("open");
-    });
-
-    document.getElementById("updatesTabBtn").addEventListener("click", () => {
-      alert("J.A.R.V.I.S. HUD Status: All 5 Multiverse Comms Channels Online.");
-    });
-
-    // Initial render
-    renderChatList();
-  </script>
-</body>
-</html>
+      docume
